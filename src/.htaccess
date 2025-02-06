@@ -1,0 +1,14 @@
+RewriteEngine On
+
+# Remove .php extension
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^([^\.]+)$ $1.php [NC,L]
+
+# Redirect to view_post.php for blog posts
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_URI} !^/s/
+RewriteRule ^(.*)$ view_post.php?post=$1 [QSA,L]
+
+# Redirect to view_static.php for static pages
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^/s/(.*)$ view_static.php?page=$1 [QSA,L]
