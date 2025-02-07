@@ -2,9 +2,9 @@
 
 Have you ever been in hand-to-hand combat with a webpage? Does javascript scare you? Do you still know what a file is, and do you agree that everything is a file? In short, do you miss the good old days of the internet, when webpages could look like sheets of paper, and basically nothing moved? If your answer is a resounding yes on all accounts, then get-off-my-lawn might be for you! Rumored by many to be the new wordpress killer, get-off-my-lawn provides really (like, really) basic blogging functionality, along with an easy way to serve additional user created pages, without the unnecessary bloat that the kids these days cram into all their so-called 'Content Management Systems'.
 
-```
-You have a problem. You decide to use javascript. Now, you have two problems. 
-``` - Sun Tsu, The are of HTML
+
+> You have a problem. You decide to use javascript. Now, you have two problems. 
+> — <cite>Sun Tsu, The are of HTML</cite>
 
 ## Features
  - No Javascript
@@ -19,9 +19,8 @@ You have a problem. You decide to use javascript. Now, you have two problems.
  
 ## Additional Features
 
-```
-All you need is three chords and the truth.
-``` - Johnny Cash, when first presented with Angular JS
+> All you need is three chords and the truth.
+> — <cite>Johnny Cash, when first presented with Angular JS</cite>
 
  - Blog posting and editing by saving text files
   - Add new static pages easily (also as files)
@@ -44,8 +43,8 @@ It's true. That's how it all started. Content management systems, Javascript fra
 
 And with that. I was free. 
 
-```
-HTML cannot be taught, but, most intelligent Naropa, since you have undergone rigorous austerity, with forebearance in suffering and with devotion to your guru, take this secret teaching to heart.
-``` Tillopa at the bank of the Ganges, teaching his student Naropa about front-end development.
+
+> HTML cannot be taught, but, most intelligent Naropa, since you have undergone rigorous austerity, with forebearance in suffering and with devotion to your guru, take this secret teaching to heart.
+> — <cite>Tillopa at the bank of the Ganges, teaching his student Naropa about front-end development</cite>
 
 This repo exists to serve others who may have similar needs, either to use as a framework, or merely as inspiration to do what I did and taylor something yourself that is specific to your needs. All others - can get off my lawn :)
