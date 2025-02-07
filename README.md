@@ -4,7 +4,7 @@ Have you ever been in hand-to-hand combat with a webpage? Does javascript scare 
 
 
 > You have a problem. You decide to use javascript. Now, you have two problems. 
-> — <cite>Sun Tsu, The are of HTML</cite>
+> — <cite>Sun Tsu, The Art of HTML</cite>
 
 ## Features
  - No Javascript
