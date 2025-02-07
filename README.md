@@ -4,7 +4,7 @@ Have you ever been in hand-to-hand combat with a webpage? Does javascript scare 
 
 ```
 You have a problem. You decide to use javascript. Now, you have two problems. 
-``- Sun Tsu, The are of HTML
+```- Sun Tsu, The are of HTML
 
 ## Features
  - No Javascript
