@@ -44,7 +44,7 @@ It's true. That's how it all started. Content management systems, Javascript fra
 And with that. I was free. 
 
 
-> HTML cannot be taught, but, most intelligent Naropa, since you have undergone rigorous austerity, with forebearance in suffering and with devotion to your guru, take this secret teaching to heart.
+> HTML cannot be taught, but, most intelligent Naropa, since you have undergone rigorous austerity, with forebearance in suffering and with devotion to your guru, blessed one, take this secret teaching to heart.
 > — <cite>Tillopa at the bank of the Ganges, teaching his student Naropa about front-end development</cite>
 
 This repo exists to serve others who may have similar needs, either to use as a framework, or merely as inspiration to do what I did and taylor something yourself that is specific to your needs. All others - can get off my lawn :)

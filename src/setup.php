@@ -51,4 +51,5 @@ if ($conn->multi_query($sql)) {
 }
 
 $conn->close();
+echo "<p>Alright, looks like everything is set up. You may now <a href='/'>proceed</a>.</p>"; 
 ?>
