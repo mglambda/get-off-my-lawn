@@ -2,7 +2,7 @@ RewriteEngine On
 
 # Remove .php extension
 #RewriteCond %{REQUEST_FILENAME} !-f
-#RewriteRule ^([^\.]+)$ $1.php [NC,L]
+#RewriteRule ^([^\.]+)$ $1.php [NC]
 
 # Redirect to view_post.php for blog posts
 RewriteCond %{REQUEST_FILENAME} !-f

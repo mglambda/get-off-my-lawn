@@ -14,8 +14,8 @@
             <?php
             $static_files = glob('static/*.{html,php}', GLOB_BRACE);
             foreach ($static_files as $file) {
-                $filename = basename($file);
-                echo '<li><a href="/s/' . str_replace('.', '-', $filename) . '">' . str_replace(['.html', '.php'], '', $filename) . '</a></li>';
+                $path = basename($file);
+                echo '<li><a href="/s/' . str_replace('.php', '', $filename) . '">' . str_replace(['.html', '.php'], '', $path) . '</a></li>';
             }
             ?>
         </ul>
