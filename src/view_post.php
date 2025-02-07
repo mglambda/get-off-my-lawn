@@ -1,4 +1,6 @@
 <?php
+echo '<p>lol</p>';
+
 include 'globals.php';
 include 'db.php';
 
