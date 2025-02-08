@@ -32,10 +32,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 // Handle stylesheet change
                 if (isset($_POST['style_file'])) {
                     $selected_style = basename($_POST['style_file']);
-                    $current_css_file = 'style/current';
-                    $valid_styles = glob('style/*.css');
+                    $current_css_file = 'styles/current';
+                    $valid_styles = glob('styles/*.css');
 
-                    if (in_array('style/' . $selected_style, $valid_styles)) {
+                    if (in_array('styles/' . $selected_style, $valid_styles)) {
                         file_put_contents($current_css_file, $selected_style);
                     } else {
                         // Fallback to minimal.css if the selected style is not valid
@@ -85,11 +85,11 @@ include 'header.php';
     echo '<p>Commiting posts will read in all .txt files in the staging/ directory and either create a post or update an existing one. By convention, the title of the post will be the filename with hyphens replaced by spaces, and the last line of the file lists tags seperated by commas.</p>';
     echo '<form method="get"><button type="submit" name="commit" value="true">Commit Staged posts</button></form>';
 
-    // Read the current CSS file name from style/current
-    $current_css_file = 'style/current';
+    // Read the current CSS file name from styles/current
+    $current_css_file = 'styles/current';
     if (file_exists($current_css_file)) {
         $css_filename = trim(file_get_contents($current_css_file));
-        if (!empty($css_filename) && file_exists('style/' . $css_filename)) {
+        if (!empty($css_filename) && file_exists('styles/' . $css_filename)) {
             $default_style = $css_filename;
         } else {
             // Fallback to minimal.css if the specified CSS file does not exist
@@ -104,7 +104,7 @@ include 'header.php';
     echo "<p>Choose a style below and apply to change the site's style. Changes will be visible after you refresh.</p>";
     echo '<form method="post">';
     echo '<label for="style_file">Stylesheet</label><select id="style_file" name="style_file">';
-    $style_files = glob('style/*.css');
+    $style_files = glob('styles/*.css');
     foreach ($style_files as $file) {
         $name = str_replace('.css', '', basename($file));
         if (basename($file) == $default_style) {

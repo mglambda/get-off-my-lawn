@@ -40,7 +40,7 @@ Have you ever been in hand-to-hand combat with a webpage? Does javascript scare 
 2. Copy the contents of the src folder to your desired http root, e.g.
 
 ```
-$ cp -R get-off-my-lawn/src /var/www
+$ cp -R get-off-my-lawn/src/* /var/www/
 ```
 
 3. Edit globals.php and set your desired values for website title etc. Also set the database name and access credentials here.
@@ -64,9 +64,9 @@ define('DB_PASS', 'password');
 define('DB_NAME', 'goml');
 ```
 
-4. Visit `https:://yourdomain.com/setup.php`. This will create a database if you didn't create one in step 3, provided the user has the necessary privileges, It also creates all the necessary tables in the database, along with some other stuff.
+4. Visit `https:://yourdomain.com/setup.php`. This will create a database if you didn't create one in step 3, provided the user has the necessary privileges, It also creates all the required tables in the database, along with some other stuff.
 
-5. Done. You can now visit `https://yourdomain.com/admin.php` to commit posts or to change the stylesheet of the website. You can add static pages by adding them as php files to the static/ folder. They will be linked in the navigation header automatically. Add posts by putting text files in the staging/ folder and commiting them in the admin panel.
+5. Done. You can now visit `https://yourdomain.com/admin.php` to commit posts or to change the stylesheet of the website. You can add static pages by creating them as php files to the static/ folder. They will be linked in the navigation header automatically. Add posts by putting text files in the staging/ folder and commiting them in the admin panel.
 
 ## Raison d'Être (that's french for "reason to be", you philistine)
 
