@@ -11,7 +11,7 @@ include 'header.php';
 // viewing specific tags
 if (isset($_GET['tags'])) {
 // Fetch tags from URL and replace underscores with spaces
-    $tags = explode('+', $_GET['tags']);
+    $tags = explode(' ', $_GET['tags']);
     $tags = array_map(fn($tag) => str_replace('_', ' ', $tag), $tags);
 
     // Prepare SQL query to fetch posts associated with all tags
@@ -22,13 +22,20 @@ if (isset($_GET['tags'])) {
     foreach ($tags as $tag) {
         $conditions[] = "(t.tag = ?)";
     }
-    $sql .= implode(' AND ', $conditions);
+    $sql .= implode(' OR ', $conditions);
     $sql .= " GROUP BY p.id HAVING COUNT(DISTINCT t.tag) = " . count($tags);
 
+    // Prepare the statement
     $stmt = $conn->prepare($sql);
-    foreach ($tags as &$tag) {
-        $stmt->bind_param('s', $tag);
+
+    if ($stmt === false) {
+        die('Error preparing SQL statement: ' . htmlspecialchars($conn->error));
     }
+
+    // Bind parameters dynamically
+    $types = str_repeat('s', count($tags)); // 's' for string
+    $stmt->bind_param($types, ...$tags);
+
     $stmt->execute();
     $result = $stmt->get_result();
 

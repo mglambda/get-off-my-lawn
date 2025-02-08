@@ -32,7 +32,7 @@ if (isset($_GET['post'])) {
 
                     if ($tag_result->num_rows > 0) {
                         while ($tag_row = $tag_result->fetch_assoc()) {
-                            echo '<a href="/t/' . str_replace(' ', '_', urlencode($tag_row['tag'])) . '">' . $tag_row['tag'] . '</a> ';
+                            echo '<a href="/t/' . urlencode(str_replace(' ', '_', $tag_row['tag'])) . '">' . $tag_row['tag'] . '</a> ';
                         }
                     }
                     ?>
