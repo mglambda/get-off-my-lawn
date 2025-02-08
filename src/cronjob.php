@@ -1,6 +1,6 @@
 <?php
 include 'globals.php';
-include 'db.php';
+include_once 'db.php';
 
 // Scan staging directory for new or updated files
 $staging_dir = 'staging/';
@@ -52,5 +52,5 @@ foreach ($files as $file) {
     $stmt->close();
 }
 
-$conn->close();
+
 ?>

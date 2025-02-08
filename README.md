@@ -1,5 +1,5 @@
 # get-off-my-lawn - Minimal Web Framework
-
+  				  
 Have you ever been in hand-to-hand combat with a webpage? Does javascript scare you? Do you still know what a file is, and do you agree that everything is a file? In short, do you miss the good old days of the internet, when webpages could look like sheets of paper, and basically nothing moved? If your answer is a resounding yes on all accounts, then get-off-my-lawn might be for you! Rumored by many to be the new wordpress killer, get-off-my-lawn provides really (like, really) basic blogging functionality, along with an easy way to serve additional user created pages, without the unnecessary bloat that the kids these days cram into all their so-called 'Content Management Systems'.
 
 
@@ -32,7 +32,39 @@ Have you ever been in hand-to-hand combat with a webpage? Does javascript scare 
    - Optimized for mobile and desktop use
     - Designed to be easily extensible
  - Now stop asking you don't actually need more
- 
+
+## Installation
+
+1. Make sure you have a webserver with PHP, as well as a mySQL database.
+
+2. Copy the contents of the src folder to your desired http root, e.g.
+``` $ cp -R get-off-my-lawn/src /var/www```
+
+3. Edit globals.php and set your desired values for website title etc. Also set the database name and access credentials here.
+
+If you have a user with mySQL root privileges step 4 will create a database for you. If you don't want that, or if your webhost prevents you from doing this, you can also create the database manually, either through your webhost's interface or by doing e.g.
+
+```
+ $ sudo mysql
+  > create database goml;
+ > CREATE USER 'new_user'@'localhost' IDENTIFIED BY 'password';
+ > GRANT ALL PRIVILEGES ON goml.* TO 'new_user'@'localhost';
+ > FLUSH PRIVILEGES;
+`` `
+
+After this, you would edit globals.php to contain the following
+
+```
+define('DB_HOST', 'localhost');
+define('DB_USER', 'new_user');
+define('DB_PASS', 'password');
+define('DB_NAME', 'goml');
+```
+
+4. Visit `https:://yourdomain.com/setup.php`. This will create a database if you didn't create one in step 3, provided the user has the necessary privileges, It also creates all the necessary tables in the database, along with some other stuff.
+
+5. Done. You can now visit `https://yourdomain.com/admin.php` to commit posts or to change the stylesheet of the website. You can add static pages by adding them as php files to the static/ folder. They will be linked in the navigation header automatically. Add posts by putting text files in the staging/ folder and commiting them in the admin panel.
+
 ## Raison d'Être (that's french for "reason to be", you philistine)
 
 I made this because I wanted to have a webpage where I can write text and present my projects and maybe occasionally add a small php script to a static page to do something fun. Naturally, I first tried to use wordpress for this. I had used wordpress many times in the past and I liked it. But when I tried out the latest version it just seemed bloated and overengineered to me. Everything was reactive, WYSIWYG, and customizable, yet I couldn't seem to get basic things done. When I found myself unable to do something as simple as add a header image, I finally broke down. Wordpress wasn't a bad product, but it wasn't for me anymore. I looked at other web frameworks, but they all had similar problems. It was all *too much*. Then, I had an epiphany.
