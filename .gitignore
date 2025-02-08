@@ -1,3 +1,5 @@
+.htpasswd
+.htaccess
 env/
 .stack-work/
 etc/
