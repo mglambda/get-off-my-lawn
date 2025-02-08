@@ -26,7 +26,7 @@ include 'header.php';
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
             echo '<article>';
-            echo '<h2><a href="/' . str_replace(' ', '-', $row['title']) . '">' . $row['title'] . '</a></h2>';
+            echo '<h2><a href="/p/' . str_replace(' ', '-', $row['title']) . '">' . $row['title'] . '</a></h2>';
             if (strlen($row['content']) > 300) {
                 echo '<p>' . substr($row['content'], 0, 300) . '...</p>';
                 echo '<p><a href="/' . str_replace(' ', '-', $row['title']) . '">Read more</a></p>';

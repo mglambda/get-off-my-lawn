@@ -1,8 +1,6 @@
 <?php
-echo '<p>lol</p>';
-
 include 'globals.php';
-include 'db.php';
+include_once 'db.php';
 
 if (isset($_GET['post'])) {
     $title = str_replace('-', ' ', $_GET['post']);
@@ -34,7 +32,7 @@ if (isset($_GET['post'])) {
 
                     if ($tag_result->num_rows > 0) {
                         while ($tag_row = $tag_result->fetch_assoc()) {
-                            echo '<a href="/index.php?tags=' . urlencode($tag_row['tag']) . '">' . $tag_row['tag'] . '</a> ';
+                            echo '<a href="/t/' . str_replace(' ', '_', urlencode($tag_row['tag'])) . '">' . $tag_row['tag'] . '</a> ';
                         }
                     }
                     ?>
@@ -42,16 +40,18 @@ if (isset($_GET['post'])) {
             </article>
         </main>
 
-        <?php
-        include 'footer.php';
+<?php
     } else {
+	include 'header.php';
         echo "Post not found.";
     }
 
     $stmt->close();
-} else {
+    } else {
+	include 'header.php';
     echo "No post specified.";
 }
 
+include 'footer.php';
 $conn->close();
 ?>
