@@ -8,7 +8,8 @@ $files = glob($staging_dir . '*.txt');
 
 foreach ($files as $file) {
     $filename = basename($file);
-    $title = str_replace('-', ' ', $filename);
+	// dropping last 4 chars works because the glob above guarantees that all files end in '.txt'
+    $title = substr(str_replace('-', ' ', $filename), 0, -4);
 
     // Read file content
     $content = file_get_contents($file);
