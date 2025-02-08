@@ -28,9 +28,9 @@ Have you ever been in hand-to-hand combat with a webpage? Does javascript scare 
   - Tags for posts
  - mySQL database because, yes, data integrity is important I guess
  - Simple, clean and truly minimal design that is easy to style using CSS
-  - High Accessibility
+ - High Accessibility
    - Optimized for mobile and desktop use
-    - Designed to be easily extensible
+ - Designed to be easily extensible
  - Now stop asking you don't actually need more
 
 ## Installation
@@ -38,7 +38,10 @@ Have you ever been in hand-to-hand combat with a webpage? Does javascript scare 
 1. Make sure you have a webserver with PHP, as well as a mySQL database.
 
 2. Copy the contents of the src folder to your desired http root, e.g.
-``` $ cp -R get-off-my-lawn/src /var/www```
+
+```
+$ cp -R get-off-my-lawn/src /var/www
+```
 
 3. Edit globals.php and set your desired values for website title etc. Also set the database name and access credentials here.
 
@@ -50,7 +53,7 @@ If you have a user with mySQL root privileges step 4 will create a database for 
  > CREATE USER 'new_user'@'localhost' IDENTIFIED BY 'password';
  > GRANT ALL PRIVILEGES ON goml.* TO 'new_user'@'localhost';
  > FLUSH PRIVILEGES;
-`` `
+```
 
 After this, you would edit globals.php to contain the following
 
