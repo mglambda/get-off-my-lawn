@@ -68,7 +68,7 @@ if ($has_banner_images) {
 
         if ($nav_links_result->num_rows > 0) {
             while ($row = $nav_links_result->fetch_assoc()) {
-                echo '<li><a href="' . htmlspecialchars($row['url']) . '">' . htmlspecialchars($row['name']) . '</a></li>';
+                echo '<li style="display: inline;"><a href="' . htmlspecialchars($row['url']) . '">' . htmlspecialchars($row['name']) . '</a></li>';
             }
         }
 

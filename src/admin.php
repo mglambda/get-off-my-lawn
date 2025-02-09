@@ -33,6 +33,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 break;
             case 'delete':
                 $id = $_POST['id'];
+
+                // Delete tags associated with the post
+                $tag_sql = "DELETE FROM `" . TABLE_PREFIX . "tags` WHERE post_id = ?";
+                $stmt = $conn->prepare($tag_sql);
+                $stmt->bind_param('i', $id);
+                $stmt->execute();
+
                 $sql = "DELETE FROM `" . TABLE_PREFIX . "posts` WHERE id = ?";
                 break;
             case 'restyle':
@@ -146,8 +153,7 @@ include 'header.php';
         echo '<p>No links found.</p>';
     }
 
-
-// style
+    // style
     // Read the current CSS file name from styles/current
     $current_css_file = 'styles/current';
     if (file_exists($current_css_file)) {
@@ -177,7 +183,6 @@ include 'header.php';
         }
     }
     echo '</select><br><button type="submit" name="action" value="restyle">Apply</button></form>';
-
 
     ?>
 </main>
