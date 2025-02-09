@@ -94,6 +94,52 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
+if (isset($_GET['preview'])) {
+    $post_id = $_GET['preview'];
+    $preview_sql = "SELECT * FROM `" . TABLE_PREFIX . "posts` WHERE id = ?";
+    $preview_stmt = $conn->prepare($preview_sql);
+    $preview_stmt->bind_param('i', $post_id);
+    $preview_stmt->execute();
+    $preview_result = $preview_stmt->get_result();
+
+    if ($preview_result->num_rows > 0) {
+        $preview_row = $preview_result->fetch_assoc();
+        include 'header.php';
+        ?>
+        <main>
+            <article>
+                <h1><?php echo htmlspecialchars($preview_row['title']); ?></h1>
+                <p><em>Created: <?php echo htmlspecialchars($preview_row['created_at']); ?> | Last Modified: <?php echo htmlspecialchars($preview_row['updated_at']); ?></em></p>
+                <p><?php echo nl2br(htmlspecialchars($preview_row['content'])); ?></p>
+
+                <!-- Tags -->
+                <div>
+                    <?php
+                    $tag_sql = "SELECT tag FROM `" . TABLE_PREFIX . "tags` WHERE post_id = ?";
+                    $tag_stmt = $conn->prepare($tag_sql);
+                    $tag_stmt->bind_param('i', $preview_row['id']);
+                    $tag_stmt->execute();
+                    $tag_result = $tag_stmt->get_result();
+
+                    if ($tag_result->num_rows > 0) {
+                        while ($tag_row = $tag_result->fetch_assoc()) {
+                            echo '<a href="/t/' . urlencode(str_replace(' ', '_', htmlspecialchars($tag_row['tag']))) . '">' . htmlspecialchars($tag_row['tag']) . '</a> ';
+                        }
+                    }
+                    ?>
+                </div>
+            </article>
+        </main>
+
+        <?php
+        include 'footer.php';
+        $conn->close();
+        exit;
+    } else {
+        echo "Post not found.";
+    }
+}
+
 include 'header.php';
 ?>
 
@@ -106,16 +152,19 @@ include 'header.php';
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
             echo '<article>';
-            echo '<h3>' . $row['title'] . '</h3>';
-            echo '<p><em>Created: ' . $row['created_at'] . ' | Last Modified: ' . $row['updated_at'] . '</em></p>';
+            echo '<h3>' . htmlspecialchars($row['title']) . '</h3>';
+            echo '<p><em>Created: ' . htmlspecialchars($row['created_at']) . ' | Last Modified: ' . htmlspecialchars($row['updated_at']) . '</em></p>';
+			echo '<form id="preview_form" method="get"></form>';
             echo '<form method="post">';
             echo '<input type="hidden" name="id" value="' . $row['id'] . '">';
             if ($row['hidden']) {
                 echo '<button type="submit" name="action" value="unhide">Unhide</button>';
+                echo '<button form="preview_form" type="submit" name="preview" value="' . $row['id'] . '">Preview</button>';				
             } else {
                 echo '<button type="submit" name="action" value="hide">Hide</button>';
             }
             echo '<button type="submit" name="action" value="delete">Delete</button>';
+
             echo '</form>';
             echo '</article>';
         }
@@ -191,3 +240,7 @@ include 'header.php';
 include 'footer.php';
 $conn->close();
 ?>
+
+
+
+
