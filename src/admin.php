@@ -16,6 +16,10 @@ if(isset($_GET['commit'])) {
 $sql = "SELECT * FROM `" . TABLE_PREFIX . "posts` ORDER BY created_at DESC";
 $result = $conn->query($sql);
 
+// Fetch all links
+$links_sql = "SELECT * FROM `" . TABLE_PREFIX . "navigation_links` ORDER BY ordering";
+$links_result = $conn->query($links_sql);
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['action'])) {
         switch ($_POST['action']) {
@@ -47,6 +51,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }
                 header("Location: admin.php");
                 exit();
+            case 'apply_links':
+                // Handle link changes
+                foreach ($_POST['links'] as $link_id => $data) {
+                    $hidden = isset($data['hidden']) ? 1 : 0;
+                    $url = $data['url'];
+                    $name = $data['name'];
+                    $ordering = $data['ordering'];
+
+                    $update_sql = "UPDATE `" . TABLE_PREFIX . "navigation_links` SET hidden = ?, url = ?, name = ?, ordering = ? WHERE id = ?";
+                    $stmt = $conn->prepare($update_sql);
+                    $stmt->bind_param('issii', $hidden, $url, $name, $ordering, $link_id);
+                    $stmt->execute();
+                }
+
+                if (isset($_POST['delete_link'])) {
+                    $delete_id = $_POST['delete_link'];
+                    $delete_sql = "DELETE FROM `" . TABLE_PREFIX . "navigation_links` WHERE id = ?";
+                    $stmt = $conn->prepare($delete_sql);
+                    $stmt->bind_param('i', $delete_id);
+                    $stmt->execute();
+                }
+
+                header("Location: admin.php");
+                exit();
         }
 
         if (isset($sql)) {
@@ -64,7 +92,9 @@ include 'header.php';
 
 <main>
     <h1>Admin Panel</h1>
+
     <?php
+	// posts
     echo '<h2>Posts</h2>';
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
@@ -88,6 +118,36 @@ include 'header.php';
     echo '<p>Commiting posts will read in all .txt files in the staging/ directory and either create a post or update an existing one. By convention, the title of the post will be the filename with hyphens replaced by spaces, and the last line of the file lists tags seperated by commas.</p>';
     echo '<form method="get"><button type="submit" name="commit" value="true">Commit Staged posts</button></form>';
 
+    // Links Section
+    echo '<h2>Navigation Links</h2>';
+	echo '<p>Links appear in the navigation bar in the header at the top of the page, provided they are unhidden. Pages found in the static/ folder are automatically added as links when you visit this page.</p>';
+    if ($links_result->num_rows > 0) {
+        echo '<form method="post">';
+        while ($link = $links_result->fetch_assoc()) {
+            echo '<article>';
+            echo '<input type="hidden" name="links[' . $link['id'] . '][id]" value="' . $link['id'] . '">';
+            echo '<label><input type="checkbox" name="links[' . $link['id'] . '][hidden]"' . ($link['hidden'] ? ' checked' : '') . '> Hidden</label>';
+            echo '<label for="url_' . $link['id'] . '">URL:</label>';
+            echo '<input type="text" id="url_' . $link['id'] . '" name="links[' . $link['id'] . '][url]" value="' . htmlspecialchars($link['url']) . '">';
+            echo '<label for="name_' . $link['id'] . '">Name:</label>';
+            echo '<input type="text" id="name_' . $link['id'] . '" name="links[' . $link['id'] . '][name]" value="' . htmlspecialchars($link['name']) . '">';
+            echo '<label for="ordering_' . $link['id'] . '">Ordering:</label>';
+            echo '<select id="ordering_' . $link['id'] . '" name="links[' . $link['id'] . '][ordering]">';
+            for ($i = 1; $i <= $links_result->num_rows; $i++) {
+                echo '<option value="' . $i . '"' . ($link['ordering'] == $i ? ' selected' : '') . '>' . $i . '</option>';
+            }
+            echo '</select>';
+            echo '<button type="submit" name="action" value="delete_link" formaction="?delete_link=' . $link['id'] . '">Delete</button>';
+            echo '</article>';
+        }
+        echo '<button type="submit" name="action" value="apply_links">Apply</button>';
+        echo '</form>';
+    } else {
+        echo '<p>No links found.</p>';
+    }
+
+
+// style
     // Read the current CSS file name from styles/current
     $current_css_file = 'styles/current';
     if (file_exists($current_css_file)) {
@@ -117,6 +177,8 @@ include 'header.php';
         }
     }
     echo '</select><br><button type="submit" name="action" value="restyle">Apply</button></form>';
+
+
     ?>
 </main>
 
