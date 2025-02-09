@@ -53,6 +53,4 @@ foreach ($files as $file) {
     $stmt->close();
 }
 
-
-$conn->close();
 ?>
