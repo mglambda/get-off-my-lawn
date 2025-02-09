@@ -54,4 +54,5 @@ foreach ($files as $file) {
 }
 
 
+$conn->close();
 ?>

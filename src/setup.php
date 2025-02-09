@@ -40,6 +40,14 @@ CREATE TABLE IF NOT EXISTS `" . TABLE_PREFIX . "tags` (
     `post_id` INT(11),
     `tag` VARCHAR(255)
 );
+
+CREATE TABLE IF NOT EXISTS `" . TABLE_PREFIX . "navigation_links` (
+    `id` INT(11) AUTO_INCREMENT PRIMARY KEY,
+    `url` VARCHAR(255) NOT NULL,
+    `name` VARCHAR(255) NOT NULL,
+    `ordering` INT(11) NOT NULL,
+    `hidden` TINYINT(1) DEFAULT 0
+);
 ";
 
 if ($conn->multi_query($sql)) {
@@ -49,6 +57,14 @@ if ($conn->multi_query($sql)) {
         }
     } while ($conn->next_result());
 }
+
+// Prefill navigation links if they don't already exist
+$sql = "INSERT INTO `" . TABLE_PREFIX . "navigation_links` (url, name, ordering, hidden) VALUES ('/', 'Home', 0, 0), ('/t/', 'Posts', 1, 0)
+        ON DUPLICATE KEY UPDATE url=url";
+$conn->query($sql);
+
+// add any links in the static/ folder
+include 'scan_static.php';
 
 $conn->close();
 
@@ -65,9 +81,9 @@ $htpasswd_path = __DIR__ . '/.htpasswd';
 
 // make sure this file exists so realpath doesn't crap out
 if(!file_exists($htpasswd_path)) {
-								 file_put_contents($htpasswd_path, '');
-								 }
-								 
+    file_put_contents($htpasswd_path, '');
+}
+
 $absolute_htpasswd_path = realpath($htpasswd_path);
 
 $new_htaccess_content = "
@@ -103,9 +119,9 @@ file_put_contents($htaccess_path, $final_htaccess_content);
 $htpasswd_content = ADMIN_USER . ":" . crypt(ADMIN_PASSWORD, base64_encode(ADMIN_PASSWORD));
 file_put_contents($htpasswd_path, $htpasswd_content);
 
-if(!file_exists('.htaccess') {
-echo "<p>Oops! There was a problem during setup: .htaccess file not found in document root. Are you sure you copied all the files, including hidden ones? Copying .htaccess from the git repository and then rerunning setup.php should fix this issue.</p>";
+if(!file_exists('.htaccess')) {
+    echo "<p>Oops! There was a problem during setup: .htaccess file not found in document root. Are you sure you copied all the files, including hidden ones? Copying .htaccess from the git repository and then rerunning setup.php should fix this issue.</p>";
 } else {
-echo "<p>Alright, looks like everything is set up. You may now <a href='/'>proceed</a>.</p>";
+    echo "<p>Alright, looks like everything is set up. You may now <a href='/'>proceed</a>.</p>";
 }
 ?>

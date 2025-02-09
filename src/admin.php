@@ -4,6 +4,9 @@ include_once 'db.php';
 
 $page_title = 'Admin';
 
+// always scan for new links in the static directory
+include 'scan_static.php';
+
 // commit if requested
 if(isset($_GET['commit'])) {
     include 'cronjob.php';

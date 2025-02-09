@@ -1,6 +1,6 @@
 <?php
 include 'globals.php';
-include 'db.php';
+include_once 'db.php';
 
 $page_title = 'Home';
 

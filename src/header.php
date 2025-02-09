@@ -62,13 +62,17 @@ if ($has_banner_images) {
 <nav>
     <ul>
         <?php
-        $static_files = glob('static/*.{html,php}', GLOB_BRACE);
-        foreach ($static_files as $file) {
-            $path = basename($file);
-            echo '<li><a href="/s/' . str_replace('.php', '', $path) . '">' . str_replace(['.html', '.php'], '', $path) . '</a></li>';
+        include_once 'db.php';
+        $sql = "SELECT * FROM `" . TABLE_PREFIX . "navigation_links` WHERE hidden = 0 ORDER BY ordering";
+        $nav_links_result = $conn->query($sql);
+
+        if ($nav_links_result->num_rows > 0) {
+            while ($row = $nav_links_result->fetch_assoc()) {
+                echo '<li><a href="' . htmlspecialchars($row['url']) . '">' . htmlspecialchars($row['name']) . '</a></li>';
+            }
         }
+
         ?>
     </ul>
 </nav>
 </header>
-
