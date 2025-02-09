@@ -17,9 +17,11 @@ function display_post_row($conn, $row) {
                     $tag_result = $tag_stmt->get_result();
 
                     if ($tag_result->num_rows > 0) {
+					echo '<br><p>Tags: ';
                         while ($tag_row = $tag_result->fetch_assoc()) {
                             echo '<a href="/t/' . urlencode(str_replace(' ', '_', htmlspecialchars($tag_row['tag']))) . '">' . htmlspecialchars($tag_row['tag']) . '</a> ';
                         }
+						echo '</p>';
                     }
                     ?>
                 </div>

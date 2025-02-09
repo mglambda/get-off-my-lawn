@@ -16,6 +16,7 @@ include 'header.php';
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
 		display_post_row_short($conn, $row);
+		echo '<br>';
         }
     } else {
         echo '<p>No posts found.</p>';
