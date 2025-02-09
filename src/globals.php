@@ -9,6 +9,12 @@ if(!defined('WEBSITE_NAME')) {
 // Website name
 define('WEBSITE_NAME', 'My Blog');
 
+// Wether the website name is displayed at the top of the page at all
+define('WEBSITE_NAME_SHOW', true);
+
+// Wether the website name is displayed over the banner image
+define('WEBSITE_NAME_OVERLAY_BANNER', true);
+
 // The ADMIN_USER is the login used to access the yourdomain.com/admin.php site, where you can commit posts and change various settings.
 define('ADMIN_USER', 'root');
 
