@@ -35,7 +35,16 @@ $has_banner_images = !empty($banner_images);
 if ($has_banner_images) {
     // Select a random banner image
     $random_banner = $banner_images[array_rand($banner_images)];
-    echo '<img src="' . htmlspecialchars($random_banner) . '" alt="Banner Image" style="width: 100%; height: auto;">';
+    $alt_text = 'Banner Image';
+
+    // Check if there is a corresponding .txt file for the alt-text
+    $image_info = pathinfo($random_banner);
+    $txt_file = 'banner_images/' . $image_info['filename'] . '.txt';
+    if (file_exists($txt_file)) {
+        $alt_text = trim(file_get_contents($txt_file));
+    }
+
+    echo '<img src="' . htmlspecialchars($random_banner) . '" alt="' . htmlspecialchars($alt_text) . '" style="width: 100%; height: auto;">';
 
     if (WEBSITE_NAME_OVERLAY_BANNER) {
         // Display the website name over the banner image
@@ -62,6 +71,4 @@ if ($has_banner_images) {
     </ul>
 </nav>
 </header>
-
-
 
