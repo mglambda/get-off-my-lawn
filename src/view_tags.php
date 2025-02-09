@@ -1,6 +1,7 @@
 <?php
 include 'globals.php';
 include_once 'db.php';
+include_once 'gomllib.php';
 
 // Check if the 'collapsed' GET variable is set and equals 'true'
 $collapsed = isset($_GET['collapsed']) && $_GET['collapsed'] === 'true';
@@ -73,16 +74,8 @@ if (isset($_GET['tags'])) {
         echo "<p>Showing posts tagged with: " . implode(', ', $tags) . "</p>";
 		if(!$collapsed) {
         while ($row = $result->fetch_assoc()) {
-            echo '<article>';
-            echo '<h2><a href="/p/' . str_replace(' ', '-', $row['title']) . '">' . $row['title'] . '</a></h2>';
-            if (strlen($row['content']) > 300) {
-                echo '<p>' . substr($row['content'], 0, 300) . '...</p>';
-                echo '<p><a href="/' . str_replace(' ', '-', $row['title']) . '">Read more</a></p>';
-            } else {
-                echo '<p>' . $row['content'] . '</p>';
-            }
-            echo '</article>';
-        } // while
+		display_post_row_short($conn, $row);
+        }
 		 } else {
 		 // collapse == true
 		 echo '<ul>';

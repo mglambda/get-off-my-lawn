@@ -27,6 +27,17 @@ function display_post_row($conn, $row) {
         <?php
 }
 
+function display_post_row_short($conn, $row) {
+            echo '<article>';
+            echo '<h2><a href="/p/' . str_replace(' ', '-', $row['title']) . '">' . $row['title'] . '</a></h2>';
+            if (strlen($row['content']) > 300) {
+                echo '<p>' . substr($row['content'], 0, 300) . '...</p>';
+                echo '<p><a href="/' . str_replace(' ', '-', $row['title']) . '">Read more</a></p>';
+            } else {
+                echo '<p>' . $row['content'] . '</p>';
+            }
+            echo '</article>';
+}
 
 function display_post($conn, $post_id) {
     $sql = "SELECT * FROM `" . TABLE_PREFIX . "posts` WHERE id = ?";
