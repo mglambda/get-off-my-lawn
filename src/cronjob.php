@@ -1,4 +1,5 @@
 <?php
+
 include 'globals.php';
 include_once 'db.php';
 
@@ -8,7 +9,7 @@ $files = glob($staging_dir . '*.txt');
 
 foreach ($files as $file) {
     $filename = basename($file);
-	// dropping last 4 chars works because the glob above guarantees that all files end in '.txt'
+    // dropping last 4 chars works because the glob above guarantees that all files end in '.txt'
     $title = substr(str_replace('-', ' ', $filename), 0, -4);
 
     // Read file content
@@ -16,7 +17,7 @@ foreach ($files as $file) {
     $lines = explode("\n", $content);
     $tags_line = array_pop($lines);
     $tags = array_map('trim', explode(',', $tags_line));
-    $tags = array_filter($tags, fn($tag) => !empty($tag));
+    $tags = array_filter($tags, fn ($tag) => !empty($tag));
 
     // Check if post exists
     $sql = "SELECT * FROM `" . TABLE_PREFIX . "posts` WHERE title = ?";
@@ -52,5 +53,3 @@ foreach ($files as $file) {
 
     $stmt->close();
 }
-
-?>

@@ -1,4 +1,5 @@
 <?php
+
 include 'globals.php';
 
 // Database connection parameters
@@ -94,7 +95,7 @@ if (file_exists($htaccess_path)) {
 $htpasswd_path = __DIR__ . '/.htpasswd';
 
 // make sure this file exists so realpath doesn't crap out
-if(!file_exists($htpasswd_path)) {
+if (!file_exists($htpasswd_path)) {
     file_put_contents($htpasswd_path, '');
 }
 
@@ -133,9 +134,8 @@ file_put_contents($htaccess_path, $final_htaccess_content);
 $htpasswd_content = ADMIN_USER . ":" . crypt(ADMIN_PASSWORD, base64_encode(ADMIN_PASSWORD));
 file_put_contents($htpasswd_path, $htpasswd_content);
 
-if(!file_exists('.htaccess')) {
+if (!file_exists('.htaccess')) {
     echo "<p>Oops! There was a problem during setup: .htaccess file not found in document root. Are you sure you copied all the files, including hidden ones? Copying .htaccess from the git repository and then rerunning setup.php should fix this issue.</p>";
 } else {
     echo "<p>Alright, looks like everything is set up. You may now <a href='/'>proceed</a>.</p>";
 }
-?>

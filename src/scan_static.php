@@ -1,4 +1,5 @@
 <?php
+
 include 'globals.php';
 include_once 'db.php';
 
@@ -36,5 +37,3 @@ foreach ($files as $file) {
 
     $stmt->close();
 }
-
-?>

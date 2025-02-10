@@ -7,13 +7,13 @@ include_once 'gomllib.php';
 $collapsed = isset($_GET['collapsed']) && $_GET['collapsed'] === 'true';
 
 
-if(isset($_GET['tags'])) {
-// Fetch tags from URL and replace underscores with spaces
+if (isset($_GET['tags'])) {
+    // Fetch tags from URL and replace underscores with spaces
     $tags = explode(' ', $_GET['tags']);
-    $tags = array_map(fn($tag) => str_replace('_', ' ', $tag), $tags);
-$page_title = 'Posts in ' . implode(', ', $tags);
+    $tags = array_map(fn ($tag) => str_replace('_', ' ', $tag), $tags);
+    $page_title = 'Posts in ' . implode(', ', $tags);
 } else {
-$page_title = 'Posts and Tags';
+    $page_title = 'Posts and Tags';
 }
 
 include 'header.php';
@@ -24,9 +24,9 @@ include 'header.php';
 
 // toggles
 echo '<ul>';
-    // Toggle sort link
-	if(!isset($_GET['tags'])) {
-	// we only offer sorting if we show all tags
+// Toggle sort link
+if (!isset($_GET['tags'])) {
+    // we only offer sorting if we show all tags
     if (isset($_GET['sort']) && $_GET['sort'] == 'count') {
         echo '<li style="display: inline"><a href="?sort=alpha">Sort alphabetically</a></li>';
     } else {
@@ -35,11 +35,11 @@ echo '<ul>';
 }
 
 // Expand/Collapse toggle
-    if ($collapsed) {
-        echo '<li style="display: inline"><a href="?collapsed=false">Expand posts</a></li>';
-    } else {
-        echo '<li style="display:inline"><a href="?collapsed=true">Collapse posts</a></li>';
-    }
+if ($collapsed) {
+    echo '<li style="display: inline"><a href="?collapsed=false">Expand posts</a></li>';
+} else {
+    echo '<li style="display:inline"><a href="?collapsed=true">Collapse posts</a></li>';
+}
 echo '</ul>';
 
 // viewing specific tags
@@ -72,24 +72,24 @@ if (isset($_GET['tags'])) {
 
     if ($result->num_rows > 0) {
         echo "<p>Showing posts tagged with: " . implode(', ', $tags) . "</p>";
-		if(!$collapsed) {
-        while ($row = $result->fetch_assoc()) {
-		display_post_row_short($conn, $row);
+        if (!$collapsed) {
+            while ($row = $result->fetch_assoc()) {
+                display_post_row_short($conn, $row);
+            }
+        } else {
+            // collapse == true
+            echo '<ul>';
+            while ($row = $result->fetch_assoc()) {
+                echo '<li><a href="/p/' . str_replace(' ', '-', $row['title']) . '">' . $row['title'] . '</a></li>';
+            } // while
+            echo '</ul>';
         }
-		 } else {
-		 // collapse == true
-		 echo '<ul>';
-        while ($row = $result->fetch_assoc()) {
-            echo '<li><a href="/p/' . str_replace(' ', '-', $row['title']) . '">' . $row['title'] . '</a></li>';
-} // while
-echo '</ul>';
-}
     } else {
         echo "<p>No posts found for the tags: " . implode(', ', $tags) . "</p>";
     }
 
     $stmt->close();
-    } else {
+} else {
     // List all tags and their post counts
     $sql = "SELECT tag, COUNT(*) as count FROM `" . TABLE_PREFIX . "tags` GROUP BY tag ORDER BY ";
     if (isset($_GET['sort']) && $_GET['sort'] == 'count') {
@@ -123,13 +123,13 @@ echo '</ul>';
                 echo '</ul>';
             }
         }
-		echo '</li>'; // closes tag item
+        echo '</li>'; // closes tag item
     }
     echo '</ul>';
 }
 
 
-    ?>
+?>
 </main>
 
 <?php

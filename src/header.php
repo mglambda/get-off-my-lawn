@@ -30,49 +30,49 @@
 
 // Check if there are any banner images in the folder
 $banner_images = glob('banner_images/*.{jpg,jpeg,png,gif}', GLOB_BRACE);
-$has_banner_images = !empty($banner_images);
+    $has_banner_images = !empty($banner_images);
 
-if ($has_banner_images) {
-    // Select a random banner image
-    $random_banner = $banner_images[array_rand($banner_images)];
-    $alt_text = 'Banner Image';
+    if ($has_banner_images) {
+        // Select a random banner image
+        $random_banner = $banner_images[array_rand($banner_images)];
+        $alt_text = 'Banner Image';
 
-    // Check if there is a corresponding .txt file for the alt-text
-    $image_info = pathinfo($random_banner);
-    $txt_file = 'banner_images/' . $image_info['filename'] . '.txt';
-    if (file_exists($txt_file)) {
-        $alt_text = trim(file_get_contents($txt_file));
+        // Check if there is a corresponding .txt file for the alt-text
+        $image_info = pathinfo($random_banner);
+        $txt_file = 'banner_images/' . $image_info['filename'] . '.txt';
+        if (file_exists($txt_file)) {
+            $alt_text = trim(file_get_contents($txt_file));
+        }
+
+        echo '<img src="' . htmlspecialchars($random_banner) . '" alt="' . htmlspecialchars($alt_text) . '" style="width: 100%; height: auto;">';
+
+        if (WEBSITE_NAME_OVERLAY_BANNER) {
+            // Display the website name over the banner image
+            echo '<div style="position: absolute; top: 50%; left: 20%; transform: translate(-50%); color: white; z-index: 1"><h1>' . htmlspecialchars(WEBSITE_NAME) . '</h1></div>';
+        }
+    } else {
+        // No banner images, display the website name above the navigation if WEBSITE_NAME_SHOW is true
+        if (WEBSITE_NAME_SHOW) {
+            echo '<h1>' . htmlspecialchars(WEBSITE_NAME) . '</h1>';
+        }
     }
-
-    echo '<img src="' . htmlspecialchars($random_banner) . '" alt="' . htmlspecialchars($alt_text) . '" style="width: 100%; height: auto;">';
-
-    if (WEBSITE_NAME_OVERLAY_BANNER) {
-        // Display the website name over the banner image
-        echo '<div style="position: absolute; top: 50%; left: 20%; transform: translate(-50%); color: white; z-index: 1"><h1>' . htmlspecialchars(WEBSITE_NAME) . '</h1></div>';
-    }
-} else {
-    // No banner images, display the website name above the navigation if WEBSITE_NAME_SHOW is true
-    if (WEBSITE_NAME_SHOW) {
-        echo '<h1>' . htmlspecialchars(WEBSITE_NAME) . '</h1>';
-    }
-}
-?>
+    ?>
 
 </div>
 <nav>
     <ul>
         <?php
-        include_once 'db.php';
-        $sql = "SELECT * FROM `" . TABLE_PREFIX . "navigation_links` WHERE hidden = 0 ORDER BY ordering";
-        $nav_links_result = $conn->query($sql);
+            include_once 'db.php';
+    $sql = "SELECT * FROM `" . TABLE_PREFIX . "navigation_links` WHERE hidden = 0 ORDER BY ordering";
+    $nav_links_result = $conn->query($sql);
 
-        if ($nav_links_result->num_rows > 0) {
-            while ($row = $nav_links_result->fetch_assoc()) {
-                echo '<li style="display: inline;"><a href="' . htmlspecialchars($row['url']) . '">' . htmlspecialchars($row['name']) . '</a></li>';
-            }
+    if ($nav_links_result->num_rows > 0) {
+        while ($row = $nav_links_result->fetch_assoc()) {
+            echo '<li style="display: inline;"><a href="' . htmlspecialchars($row['url']) . '">' . htmlspecialchars($row['name']) . '</a></li>';
         }
+    }
 
-        ?>
+    ?>
     </ul>
 </nav>
 </header>

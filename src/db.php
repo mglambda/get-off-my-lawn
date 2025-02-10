@@ -1,4 +1,5 @@
 <?php
+
 include 'globals.php';
 
 try {
@@ -11,4 +12,3 @@ try {
     echo "<p style='color:red;'>Warning: Database connection failed. If you haven't already, please visit <a href='setup.php'>setup.php</a> to create the database and install the necessary tables.</p>";
     throw $e;
 }
-?>
