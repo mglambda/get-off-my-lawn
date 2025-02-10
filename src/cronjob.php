@@ -3,14 +3,19 @@
 include 'globals.php';
 include_once 'db.php';
 
+// Include Parsedown library
+require_once 'include/parsedown/Parsedown.php';
+
+$Parsedown = new Parsedown();
+
 // Scan staging directory for new or updated files
 $staging_dir = 'staging/';
-$files = glob($staging_dir . '*.txt');
+$files = glob($staging_dir . '*.{txt,md}', GLOB_BRACE);
 
 foreach ($files as $file) {
     $filename = basename($file);
-    // dropping last 4 chars works because the glob above guarantees that all files end in '.txt'
-    $title = substr(str_replace('-', ' ', $filename), 0, -4);
+    // Remove the extension to get the title
+    $title = str_replace(['-', '_'], ' ', pathinfo($filename, PATHINFO_FILENAME));
 
     // Read file content
     $content = file_get_contents($file);
@@ -18,6 +23,14 @@ foreach ($files as $file) {
     $tags_line = array_pop($lines);
     $tags = array_map('trim', explode(',', $tags_line));
     $tags = array_filter($tags, fn ($tag) => !empty($tag));
+
+
+    // prepare content based on file extension
+    if (pathinfo($file, PATHINFO_EXTENSION) === 'md') {
+        $content = $Parsedown->text(implode("\n", $lines));
+    } else {
+        $content = implode("\n", $lines);
+    }
 
     // Check if post exists
     $sql = "SELECT * FROM `" . TABLE_PREFIX . "posts` WHERE title = ?";
@@ -30,20 +43,24 @@ foreach ($files as $file) {
         // Update existing post
         $row = $result->fetch_assoc();
         $post_id = $row['id'];
+
         $sql = "UPDATE `" . TABLE_PREFIX . "posts` SET content = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param('si', implode("\n", $lines), $post_id);
+        $stmt->bind_param('si', $content, $post_id);
     } else {
         // Insert new post
+
         $sql = "INSERT INTO `" . TABLE_PREFIX . "posts` (title, content) VALUES (?, ?)";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param('ss', $title, implode("\n", $lines));
+        $stmt->bind_param('ss', $title, $content);
     }
 
     if ($stmt->execute()) {
         // Insert tags
         $post_id = $stmt->insert_id ?: $row['id'];
         foreach ($tags as $tag) {
+            var_dump($tag);
+            var_dump($post_id);
             $tag_sql = "INSERT INTO `" . TABLE_PREFIX . "tags` (post_id, tag) VALUES (?, ?)";
             $tag_stmt = $conn->prepare($tag_sql);
             $tag_stmt->bind_param('is', $post_id, strtolower(trim($tag)));

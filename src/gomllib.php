@@ -6,7 +6,8 @@ function display_post_row($conn, $row)
             <article>
                 <h2><?php echo htmlspecialchars($row['title']); ?></h2>
                 <p><em>Created: <?php echo htmlspecialchars($row['created_at']); ?> | Last Modified: <?php echo htmlspecialchars($row['updated_at']); ?></em></p>
-                <p><?php echo nl2br(htmlspecialchars($row['content'])); ?></p>
+				<br>
+                <?php echo $row['content']; ?>
 
                 <!-- Tags -->
                 <div>

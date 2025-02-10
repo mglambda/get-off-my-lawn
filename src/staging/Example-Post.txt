@@ -1,0 +1,3 @@
+<p>This is an example post. You can write or edit these as files in the /staging folder. By convention, the last line of a post is interpreted as a comma seperated list of tags. Case doesn't matter.</p>
+
+Example, Cool post, Unfunny

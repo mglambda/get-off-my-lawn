@@ -11,6 +11,8 @@ include 'scan_static.php';
 // commit if requested
 if (isset($_GET['commit'])) {
     include 'cronjob.php';
+    header("Location: admin.php");
+    exit();
 }
 
 // Fetch all posts
