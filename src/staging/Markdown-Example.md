@@ -7,9 +7,10 @@ With markdown you can easily
   - write code examples
    - do many things!
 
+*note:* Posts tagged with `RSS` are automatically published to an atom feed, accessible via [/rss](/rss/).
 
 ### Credits
 
 Thanks to the wonderful [parsedown](https://github.com/erusev/parsedown) library for powering this.
 
-example
+example, RSS
