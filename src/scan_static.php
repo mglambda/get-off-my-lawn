@@ -10,7 +10,7 @@ $files = glob($static_dir . '*.php');
 foreach ($files as $file) {
     $filename = basename($file);
     $url = '/s/' . str_replace('.php', '', $filename);
-    $name = str_replace(['-', '_'], ' ', $filename);
+    $name = str_replace(['-', '_'], ' ', str_replace('.php', '', $filename));
 
     // Check if the link already exists
     $sql = "SELECT * FROM `" . TABLE_PREFIX . "navigation_links` WHERE url = ?";
