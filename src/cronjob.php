@@ -58,9 +58,14 @@ foreach ($files as $file) {
     if ($stmt->execute()) {
         // Insert tags
         $post_id = $stmt->insert_id ?: $row['id'];
+        // Delete tags associated with the post before inserting the new ones
+        $tag_delete_sql = "DELETE FROM `" . TABLE_PREFIX . "tags` WHERE post_id = ?";
+        $stmt = $conn->prepare($tag_delete_sql);
+        $stmt->bind_param('i', $post_id);
+        $stmt->execute();
+
+
         foreach ($tags as $tag) {
-            var_dump($tag);
-            var_dump($post_id);
             $tag_sql = "INSERT INTO `" . TABLE_PREFIX . "tags` (post_id, tag) VALUES (?, ?)";
             $tag_stmt = $conn->prepare($tag_sql);
             $tag_stmt->bind_param('is', $post_id, strtolower(trim($tag)));

@@ -7,6 +7,8 @@ With markdown you can easily
   - write code examples
    - do many things!
 
+Have a look at the examples in the `staging/` folder to learn more.
+
 *note:* Posts tagged with `RSS` are automatically published to an atom feed, accessible via [/rss](/rss/).
 
 ### Credits
