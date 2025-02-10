@@ -2,14 +2,16 @@
     include_once 'db.php';
 
 // Retrieve and include sticky elements for the bottom position
-    $sticky_elements_sql = "SELECT * FROM `" . TABLE_PREFIX . "sticky_elements` WHERE visibility = 'all_pages' AND layout_position = 'bottom' ORDER BY `order`";
+    $sticky_elements_sql = "SELECT * FROM `" . TABLE_PREFIX . "sticky_elements` WHERE layout_position = 'bottom' ORDER BY `order`";
     $sticky_elements_result = $conn->query($sticky_elements_sql);
 
     if ($sticky_elements_result->num_rows > 0) {
         while ($sticky_element = $sticky_elements_result->fetch_assoc()) {
             $document_path = $sticky_element['document_path'];
             if (file_exists($document_path)) {
+if($sticky_element['visibility'] == 'all_pages' || ($sticky_element['visibility'] == 'index_only' && basename($_SERVER['SCRIPT_FILENAME']) == 'index.php')) {			
                 include $document_path;
+				}
             }
         }
     }

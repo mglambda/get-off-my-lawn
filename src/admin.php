@@ -5,9 +5,6 @@ include_once 'gomllib.php';
 
 $page_title = 'Admin';
 
-var_dump($_POST);
-var_dump($_GET);
-
 // always scan for new links in the static directory
 include 'scan_static.php';
 
