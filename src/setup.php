@@ -48,6 +48,14 @@ CREATE TABLE IF NOT EXISTS `" . TABLE_PREFIX . "navigation_links` (
     `ordering` INT(11) NOT NULL,
     `hidden` TINYINT(1) DEFAULT 0
 );
+
+CREATE TABLE IF NOT EXISTS `" . TABLE_PREFIX . "sticky_elements` (
+    `id` INT(11) AUTO_INCREMENT PRIMARY KEY,
+    `document_path` VARCHAR(255) NOT NULL,
+    `order` INT(11) NOT NULL,
+    `visibility` ENUM('all_pages', 'index_only') NOT NULL,
+    `layout_position` ENUM('top', 'bottom', 'float_left', 'float_right') NOT NULL
+);
 ";
 
 if ($conn->multi_query($sql)) {
@@ -65,6 +73,12 @@ $conn->query($sql);
 
 // add any links in the static/ folder
 include 'scan_static.php';
+
+// Insert example sticky element if it does not already exist
+$sql = "INSERT INTO `" . TABLE_PREFIX . "sticky_elements` (document_path, `order`, visibility, layout_position)
+        VALUES ('/qotd.php', 0, 'index_only', 'top')
+        ON DUPLICATE KEY UPDATE document_path=document_path";
+$conn->query($sql);
 
 $conn->close();
 

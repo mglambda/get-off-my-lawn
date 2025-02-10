@@ -5,6 +5,9 @@ include_once 'gomllib.php';
 
 $page_title = 'Admin';
 
+var_dump($_POST);
+var_dump($_GET);
+
 // always scan for new links in the static directory
 include 'scan_static.php';
 
@@ -21,16 +24,41 @@ $result = $conn->query($sql);
 $links_sql = "SELECT * FROM `" . TABLE_PREFIX . "navigation_links` ORDER BY ordering";
 $links_result = $conn->query($links_sql);
 
+// Fetch all sticky elements
+$sticky_elements_sql = "SELECT * FROM `" . TABLE_PREFIX . "sticky_elements` ORDER BY `order`";
+$sticky_elements_result = $conn->query($sticky_elements_sql);
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // some delete actions are handled without 'action' being set, due to the way HTML forms work
+    if(isset($_POST['delete_link'])) {
+                    $delete_id = $_POST['delete_link'];
+                    $delete_sql = "DELETE FROM `" . TABLE_PREFIX . "navigation_links` WHERE id = ?";
+                    $stmt = $conn->prepare($delete_sql);
+                    $stmt->bind_param('i', $delete_id);
+                    $stmt->execute();
+
+                header("Location: admin.php");
+                exit();
+}                else if (isset($_POST['delete_sticky'])) {
+                    $delete_id = $_POST['delete_sticky'];
+                    $delete_sql = "DELETE FROM `" . TABLE_PREFIX . "sticky_elements` WHERE id = ?";
+                    $stmt = $conn->prepare($delete_sql);
+                    $stmt->bind_param('i', $delete_id);
+                    $stmt->execute();
+
+				                header("Location: admin.php");
+                exit();
+                }
+
     if (isset($_POST['action'])) {
         switch ($_POST['action']) {
             case 'hide':
                 $id = $_POST['id'];
-                $sql = "UPDATE `" . TABLE_PREFIX . "posts` SET hidden = 1 WHERE id = ?";
+                $action_sql = "UPDATE `" . TABLE_PREFIX . "posts` SET hidden = 1 WHERE id = ?";
                 break;
             case 'unhide':
                 $id = $_POST['id'];
-                $sql = "UPDATE `" . TABLE_PREFIX . "posts` SET hidden = 0 WHERE id = ?";
+                $action_sql = "UPDATE `" . TABLE_PREFIX . "posts` SET hidden = 0 WHERE id = ?";
                 break;
             case 'delete':
                 $id = $_POST['id'];
@@ -41,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $stmt->bind_param('i', $id);
                 $stmt->execute();
 
-                $sql = "DELETE FROM `" . TABLE_PREFIX . "posts` WHERE id = ?";
+                $action_sql = "DELETE FROM `" . TABLE_PREFIX . "posts` WHERE id = ?";
                 break;
             case 'restyle':
                 // Handle stylesheet change
@@ -72,21 +100,44 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $stmt->bind_param('issii', $hidden, $url, $name, $ordering, $link_id);
                     $stmt->execute();
                 }
+				                header("Location: admin.php");
+                exit();
 
-                if (isset($_POST['delete_link'])) {
-                    $delete_id = $_POST['delete_link'];
-                    $delete_sql = "DELETE FROM `" . TABLE_PREFIX . "navigation_links` WHERE id = ?";
-                    $stmt = $conn->prepare($delete_sql);
-                    $stmt->bind_param('i', $delete_id);
+            case 'update_sticky':
+                // Handle sticky element updates
+                foreach ($_POST['sticky_elements'] as $id => $data) {
+                    $document_path = $data['document_path'];
+                    $order = $data['order'];
+                    $visibility = $data['visibility'];
+                    $layout_position = $data['layout_position'];
+
+                    $update_sql = "UPDATE `" . TABLE_PREFIX . "sticky_elements` SET document_path = ?, `order` = ?, visibility = ?, layout_position = ? WHERE id = ?";
+                    $stmt = $conn->prepare($update_sql);
+                    $stmt->bind_param('sissi', $document_path, $order, $visibility, $layout_position, $id);
                     $stmt->execute();
                 }
+
+
+                header("Location: admin.php");
+                exit();
+            case 'add_sticky_element':
+                // Handle adding a new sticky element
+                $document_path = $_POST['new_document_path'];
+                $order = $_POST['new_order'];
+                $visibility = $_POST['new_visibility'];
+                $layout_position = $_POST['new_layout_position'];
+
+                $insert_sql = "INSERT INTO `" . TABLE_PREFIX . "sticky_elements` (document_path, `order`, visibility, layout_position) VALUES (?, ?, ?, ?)";
+                $stmt = $conn->prepare($insert_sql);
+                $stmt->bind_param('siss', $document_path, $order, $visibility, $layout_position);
+                $stmt->execute();
 
                 header("Location: admin.php");
                 exit();
         }
 
-        if (isset($sql)) {
-            $stmt = $conn->prepare($sql);
+        if (isset($action_sql)) {
+            $stmt = $conn->prepare($action_sql);
             $stmt->bind_param('i', $id);
             $stmt->execute();
             header("Location: admin.php");
@@ -124,7 +175,7 @@ include 'header.php';
             echo '<input type="hidden" name="id" value="' . $row['id'] . '">';
             if ($row['hidden']) {
                 echo '<button type="submit" name="action" value="unhide">Unhide</button>';
-                echo '<button form="preview_form" type="submit" name="preview" value="' . $row['id'] . '">Preview</button>';				
+                echo '<button form="preview_form" type="submit" name="preview" value="' . $row['id'] . '">Preview</button>';
             } else {
                 echo '<button type="submit" name="action" value="hide">Hide</button>';
             }
@@ -158,7 +209,7 @@ include 'header.php';
                 echo '<option value="' . $i . '"' . ($link['ordering'] == $i ? ' selected' : '') . '>' . $i . '</option>';
             }
             echo '</select>';
-            echo '<button type="submit" name="action" value="delete_link" formaction="?delete_link=' . $link['id'] . '">Delete</button>';
+            echo '<button type="submit" name="delete_link" value="' . $link['id'] . '">Delete</button>';
             echo '</article>';
         }
         echo '<button type="submit" name="action" value="apply_links">Apply</button>';
@@ -183,6 +234,87 @@ include 'header.php';
         $default_style = 'minimal.css';
     }
 
+
+
+    // Sticky Elements Section
+    echo '<h2>Sticky Elements</h2>';
+	echo '<p>Use sticky elements to add permanent features to your site, like a message of the day, or a custom navigation bar. These will be displayed on all pages, or just the index.</p>';
+    if ($sticky_elements_result->num_rows > 0) {
+        echo '<form method="post">';
+        while ($sticky_element = $sticky_elements_result->fetch_assoc()) {
+            echo '<article>';
+            echo '<input type="hidden" name="sticky_elements[' . $sticky_element['id'] . '][id]" value="' . $sticky_element['id'] . '">';
+            echo '<label for="document_path_' . $sticky_element['id'] . '">Document Path:</label>';
+            echo '<input type="text" id="document_path_' . $sticky_element['id'] . '" name="sticky_elements[' . $sticky_element['id'] . '][document_path]" value="' . htmlspecialchars($sticky_element['document_path']) . '">';
+            echo '<label for="order_' . $sticky_element['id'] . '">Order:</label>';
+            echo '<input type="number" id="order_' . $sticky_element['id'] . '" name="sticky_elements[' . $sticky_element['id'] . '][order]" value="' . htmlspecialchars($sticky_element['order']) . '">';
+            echo '<label for="visibility_' . $sticky_element['id'] . '">Visibility:</label>';
+            echo '<select id="visibility_' . $sticky_element['id'] . '" name="sticky_elements[' . $sticky_element['id'] . '][visibility]">';
+            echo '<option value="all_pages"' . ($sticky_element['visibility'] == 'all_pages' ? ' selected' : '') . '>All Pages</option>';
+            echo '<option value="index_only"' . ($sticky_element['visibility'] == 'index_only' ? ' selected' : '') . '>Index Only</option>';
+            echo '</select>';
+            echo '<label for="layout_position_' . $sticky_element['id'] . '">Layout Position:</label>';
+            echo '<select id="layout_position_' . $sticky_element['id'] . '" name="sticky_elements[' . $sticky_element['id'] . '][layout_position]">';
+            echo '<option value="top"' . ($sticky_element['layout_position'] == 'top' ? ' selected' : '') . '>Top</option>';
+            echo '<option value="bottom"' . ($sticky_element['layout_position'] == 'bottom' ? ' selected' : '') . '>Bottom</option>';
+            echo '<option value="float_left"' . ($sticky_element['layout_position'] == 'float_left' ? ' selected' : '') . '>Float Left</option>';
+            echo '<option value="float_right"' . ($sticky_element['layout_position'] == 'float_right' ? ' selected' : '') . '>Float Right</option>';
+            echo '</select>';
+            echo '<button type="submit" name="delete_sticky" value="' . $sticky_element['id'] . '">Delete</button>';
+            echo '</article>';
+        }
+        echo '<button type="submit" name="action" value="update_sticky">Update Sticky Elements</button>';
+        echo '</form>';
+
+        // Add new sticky element form
+        echo '<h3>Add New Sticky Element</h3>';
+        echo '<form method="post">';
+        echo '<label for="new_document_path">Document Path:</label>';
+        echo '<input type="text" id="new_document_path" name="new_document_path">';
+        echo '<label for="new_order">Order:</label>';
+        echo '<input type="number" id="new_order" name="new_order">';
+        echo '<label for="new_visibility">Visibility:</label>';
+        echo '<select id="new_visibility" name="new_visibility">';
+        echo '<option value="all_pages">All Pages</option>';
+        echo '<option value="index_only">Index Only</option>';
+        echo '</select>';
+        echo '<label for="new_layout_position">Layout Position:</label>';
+        echo '<select id="new_layout_position" name="new_layout_position">';
+        echo '<option value="top">Top</option>';
+        echo '<option value="bottom">Bottom</option>';
+        echo '<option value="float_left">Float Left</option>';
+        echo '<option value="float_right">Float Right</option>';
+        echo '</select>';
+        echo '<button type="submit" name="action" value="add_sticky_element">Add Sticky Element</button>';
+        echo '</form>';
+    } else {
+        echo '<p>No sticky elements found.</p>';
+
+        // Add new sticky element form
+        echo '<h3>Add New Sticky Element</h3>';
+        echo '<form method="post">';
+        echo '<label for="new_document_path">Document Path:</label>';
+        echo '<input type="text" id="new_document_path" name="new_document_path">';
+        echo '<label for="new_order">Order:</label>';
+        echo '<input type="number" id="new_order" name="new_order">';
+        echo '<label for="new_visibility">Visibility:</label>';
+        echo '<select id="new_visibility" name="new_visibility">';
+        echo '<option value="all_pages">All Pages</option>';
+        echo '<option value="index_only">Index Only</option>';
+        echo '</select>';
+        echo '<label for="new_layout_position">Layout Position:</label>';
+        echo '<select id="new_layout_position" name="new_layout_position">';
+        echo '<option value="top">Top</option>';
+        echo '<option value="bottom">Bottom</option>';
+        echo '<option value="float_left">Float Left</option>';
+        echo '<option value="float_right">Float Right</option>';
+        echo '</select>';
+        echo '<button type="submit" name="action" value="add_sticky_element">Add Sticky Element</button>';
+        echo '</form>';
+    }
+
+
+// style section
     echo '<h2>Style</h2>';
     echo "<p>Choose a style below and apply to change the site's style. Changes will be visible after you refresh.</p>";
     echo '<form method="post">';
@@ -205,5 +337,3 @@ include 'header.php';
 include 'footer.php';
 $conn->close();
 ?>
-
-
