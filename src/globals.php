@@ -15,6 +15,9 @@ if (!defined('WEBSITE_NAME')) {
     // Wether the website name is displayed over the banner image
     define('WEBSITE_NAME_OVERLAY_BANNER', true);
 
+    // Should setup.php prefill the database with some example content? Set to false if you don't want Example post, message of the day etc. to be included in the website when you run setup.php. This also won't happen if your database already contains entries for the relevant tables.
+    define('SETUP_CREATE_EXAMPLES', true);
+
     // The ADMIN_USER is the login used to access the yourdomain.com/admin.php site, where you can commit posts and change various settings.
     define('ADMIN_USER', 'root');
 
@@ -31,7 +34,7 @@ if (!defined('WEBSITE_NAME')) {
     // replace this with your mysql user password
     define('DB_PASS', 'example_password');
 
-    // replace this with your desired database. If this isn't already created by you or your webhost, going to setup.php will attempt to create it. This requires the appropriate privileges for the user defined above.
+    // replace this with your desired database. If this isn't already created by you or your webhost, visiting setup.php will attempt to create it. This requires the appropriate privileges for the user defined above.
     define('DB_NAME', 'goml_db');
 
     // The table prefix will be prepended to all tables created in the database. This can be useful if you are restricted by your webhost to only have one database.

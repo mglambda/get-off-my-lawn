@@ -7,7 +7,7 @@
 
     <?php
      include_once 'db.php';
-	 
+
     // Read the current CSS file name from styles/current
     $current_css_file = 'styles/current';
     if (file_exists($current_css_file)) {
@@ -29,7 +29,7 @@
 <header>
   <div>
 <?php
- 
+
 // Check if there are any banner images in the folder
 $banner_images = glob('banner_images/*.{jpg,jpeg,png,gif}', GLOB_BRACE);
     $has_banner_images = !empty($banner_images);
@@ -66,15 +66,15 @@ $banner_images = glob('banner_images/*.{jpg,jpeg,png,gif}', GLOB_BRACE);
     <ul>
         <?php
             $sql = "SELECT * FROM `" . TABLE_PREFIX . "navigation_links` WHERE hidden = 0 ORDER BY ordering";
-            $nav_links_result = $conn->query($sql);
+    $nav_links_result = $conn->query($sql);
 
-            if ($nav_links_result->num_rows > 0) {
-                while ($row = $nav_links_result->fetch_assoc()) {
-                    echo '<li style="display: inline;"><a href="' . htmlspecialchars($row['url']) . '">' . htmlspecialchars($row['name']) . '</a></li>';
-                }
-            }
+    if ($nav_links_result->num_rows > 0) {
+        while ($row = $nav_links_result->fetch_assoc()) {
+            echo '<li style="display: inline;"><a href="' . htmlspecialchars($row['url']) . '">' . htmlspecialchars($row['name']) . '</a></li>';
+        }
+    }
 
-        ?>
+    ?>
     </ul>
 </nav>
 </header>
@@ -89,14 +89,14 @@ $banner_images = glob('banner_images/*.{jpg,jpeg,png,gif}', GLOB_BRACE);
         while ($sticky_element = $sticky_elements_result->fetch_assoc()) {
             $document_path = $sticky_element['document_path'];
             if (file_exists($document_path)) {
-if($sticky_element['visibility'] == 'all_pages' || ($sticky_element['visibility'] == 'index_only' && basename($_SERVER['SCRIPT_FILENAME']) == 'index.php')) {
-                include $document_path;
-}
+                if ($sticky_element['visibility'] == 'all_pages' || ($sticky_element['visibility'] == 'index_only' && basename($_SERVER['SCRIPT_FILENAME']) == 'index.php')) {
+                    include $document_path;
+                }
             }
         }
     }
 
 
-	?>
+    ?>
 
 

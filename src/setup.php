@@ -67,19 +67,32 @@ if ($conn->multi_query($sql)) {
     } while ($conn->next_result());
 }
 
-// Prefill navigation links if they don't already exist
-$sql = "INSERT INTO `" . TABLE_PREFIX . "navigation_links` (url, name, ordering, hidden) VALUES ('/', 'Home', 0, 0), ('/t/', 'Posts', 1, 0)
-        ON DUPLICATE KEY UPDATE url=url";
-$conn->query($sql);
 
-// add any links in the static/ folder
-include 'scan_static.php';
 
-// Insert example sticky element if it does not already exist
-$sql = "INSERT INTO `" . TABLE_PREFIX . "sticky_elements` (document_path, `order`, visibility, layout_position)
-        VALUES ('/qotd.php', 0, 'index_only', 'top')
-        ON DUPLICATE KEY UPDATE document_path=document_path";
-$conn->query($sql);
+// prefill with example content if tables are empty
+if (SETUP_CREATE_EXAMPLES) {
+    // Prefill navigation links if they don't already exist
+    $sql = "SELECT COUNT(*) FROM `" . TABLE_PREFIX . "navigation_links`";
+    $result = $conn->query($sql);
+    $row = $result->fetch_row();
+    if ($row[0] == 0) {
+        $sql = "INSERT INTO `" . TABLE_PREFIX . "navigation_links` (url, name, ordering, hidden) VALUES ('/', 'Home', 0, 0), ('/t/', 'Posts', 1, 0)";
+        $conn->query($sql);
+    }
+
+    // add any links in the static/ folder
+    include 'scan_static.php';
+
+    // Insert example sticky element if it does not already exist
+    $sql = "SELECT COUNT(*) FROM `" . TABLE_PREFIX . "sticky_elements`";
+    $result = $conn->query($sql);
+    $row = $result->fetch_row();
+    if ($row[0] == 0) {
+        $sql = "INSERT INTO `" . TABLE_PREFIX . "sticky_elements` (document_path, `order`, visibility, layout_position)
+                VALUES ('/qotd.php', 0, 'index_only', 'top')";
+        $conn->query($sql);
+    }
+}
 
 $conn->close();
 
@@ -139,3 +152,7 @@ if (!file_exists('.htaccess')) {
 } else {
     echo "<p>Alright, looks like everything is set up. You may now <a href='/'>proceed</a>.</p>";
 }
+
+
+
+
