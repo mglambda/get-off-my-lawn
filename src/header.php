@@ -6,6 +6,8 @@
     <title><?php echo WEBSITE_NAME; ?> - <?php echo $page_title ?? ''; ?></title>
 
     <?php
+     include_once 'db.php';
+	 
     // Read the current CSS file name from styles/current
     $current_css_file = 'styles/current';
     if (file_exists($current_css_file)) {
@@ -56,23 +58,43 @@ $banner_images = glob('banner_images/*.{jpg,jpeg,png,gif}', GLOB_BRACE);
             echo '<h1>' . htmlspecialchars(WEBSITE_NAME) . '</h1>';
         }
     }
-    ?>
 
+
+    ?>
 </div>
 <nav>
     <ul>
         <?php
-            include_once 'db.php';
-    $sql = "SELECT * FROM `" . TABLE_PREFIX . "navigation_links` WHERE hidden = 0 ORDER BY ordering";
-    $nav_links_result = $conn->query($sql);
+            $sql = "SELECT * FROM `" . TABLE_PREFIX . "navigation_links` WHERE hidden = 0 ORDER BY ordering";
+            $nav_links_result = $conn->query($sql);
 
-    if ($nav_links_result->num_rows > 0) {
-        while ($row = $nav_links_result->fetch_assoc()) {
-            echo '<li style="display: inline;"><a href="' . htmlspecialchars($row['url']) . '">' . htmlspecialchars($row['name']) . '</a></li>';
-        }
-    }
+            if ($nav_links_result->num_rows > 0) {
+                while ($row = $nav_links_result->fetch_assoc()) {
+                    echo '<li style="display: inline;"><a href="' . htmlspecialchars($row['url']) . '">' . htmlspecialchars($row['name']) . '</a></li>';
+                }
+            }
 
-    ?>
+        ?>
     </ul>
 </nav>
 </header>
+
+<?php
+
+     // Retrieve and include sticky elements for the top position
+    $sticky_elements_sql = "SELECT * FROM `" . TABLE_PREFIX . "sticky_elements` WHERE visibility = 'all_pages' AND layout_position = 'top' ORDER BY `order`";
+    $sticky_elements_result = $conn->query($sticky_elements_sql);
+
+    if ($sticky_elements_result->num_rows > 0) {
+        while ($sticky_element = $sticky_elements_result->fetch_assoc()) {
+            $document_path = $sticky_element['document_path'];
+            if (file_exists($document_path)) {
+                include $document_path;
+            }
+        }
+    }
+
+
+	?>
+
+

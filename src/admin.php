@@ -24,9 +24,6 @@ $result = $conn->query($sql);
 $links_sql = "SELECT * FROM `" . TABLE_PREFIX . "navigation_links` ORDER BY ordering";
 $links_result = $conn->query($links_sql);
 
-// Fetch all sticky elements
-$sticky_elements_sql = "SELECT * FROM `" . TABLE_PREFIX . "sticky_elements` ORDER BY `order`";
-$sticky_elements_result = $conn->query($sticky_elements_sql);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // some delete actions are handled without 'action' being set, due to the way HTML forms work
@@ -237,6 +234,10 @@ if (file_exists($current_css_file)) {
 
 
 // Sticky Elements Section
+// Fetch all sticky elements
+$sticky_elements_sql = "SELECT * FROM `" . TABLE_PREFIX . "sticky_elements`";
+$sticky_elements_result = $conn->query($sticky_elements_sql);
+
 echo '<h2>Sticky Elements</h2>';
 echo '<p>Use sticky elements to add permanent features to your site, like a message of the day, or a custom navigation bar. These will be displayed on all pages, or just the index.</p>';
 if ($sticky_elements_result->num_rows > 0) {
