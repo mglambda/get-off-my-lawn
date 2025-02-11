@@ -1,4 +1,5 @@
 <?php
+
 // to be included in admin.php
 
 // Fetch all links
@@ -59,5 +60,3 @@ if ($links_result->num_rows > 0) {
     echo '<button type="submit" name="action" value="add_link">Add Link</button>';
     echo '</form>';
 }
-
-?>

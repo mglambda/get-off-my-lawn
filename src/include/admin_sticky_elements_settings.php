@@ -1,4 +1,5 @@
 <?php
+
 // to be included in admin.php
 
 // Fetch all sticky elements
@@ -78,6 +79,3 @@ if ($sticky_elements_result->num_rows > 0) {
     echo '<button type="submit" name="action" value="add_sticky_element">Add Sticky Element</button>';
     echo '</form>';
 }
-
-
-?>

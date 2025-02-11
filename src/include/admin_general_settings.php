@@ -1,4 +1,5 @@
 <?php
+
 // to be included in admin.php
 
 echo '<form method="post">';
@@ -36,5 +37,3 @@ if ($start_matches && $end_matches) {
 
 echo '<button type="submit">Apply</button>';
 echo '</form>';
-
-?>
