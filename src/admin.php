@@ -23,7 +23,6 @@ $result = $conn->query($sql);
 $links_sql = "SELECT * FROM `" . TABLE_PREFIX . "navigation_links` ORDER BY ordering";
 $links_result = $conn->query($links_sql);
 
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // some delete actions are handled without 'action' being set, due to the way HTML forms work
     if (isset($_POST['delete_link'])) {
@@ -113,7 +112,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $stmt->execute();
                 }
 
-
                 header("Location: admin.php");
                 exit();
             case 'add_sticky_element':
@@ -126,6 +124,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $insert_sql = "INSERT INTO `" . TABLE_PREFIX . "sticky_elements` (document_path, `order`, visibility, layout_position) VALUES (?, ?, ?, ?)";
                 $stmt = $conn->prepare($insert_sql);
                 $stmt->bind_param('siss', $document_path, $order, $visibility, $layout_position);
+                $stmt->execute();
+
+                header("Location: admin.php");
+                exit();
+            case 'add_link':
+                // Handle adding a new link
+                $url = $_POST['new_url'];
+                $name = $_POST['new_name'];
+                $ordering = $_POST['new_ordering'];
+
+                $insert_sql = "INSERT INTO `" . TABLE_PREFIX . "navigation_links` (url, name, ordering) VALUES (?, ?, ?)";
+                $stmt = $conn->prepare($insert_sql);
+                $stmt->bind_param('ssi', $url, $name, $ordering);
                 $stmt->execute();
 
                 header("Location: admin.php");
@@ -210,8 +221,38 @@ if ($links_result->num_rows > 0) {
     }
     echo '<button type="submit" name="action" value="apply_links">Apply</button>';
     echo '</form>';
+
+    // Add new link form
+    echo '<h3>Add New Link</h3>';
+    echo '<form method="post">';
+    echo '<label for="new_url">URL:</label>';
+    echo '<input type="text" id="new_url" name="new_url">';
+    echo '<label for="new_name">Name:</label>';
+    echo '<input type="text" id="new_name" name="new_name">';
+    echo '<label for="new_ordering">Ordering:</label>';
+    echo '<select id="new_ordering" name="new_ordering">';
+    for ($i = 1; $i <= $links_result->num_rows + 1; $i++) {
+        echo '<option value="' . $i . '">' . $i . '</option>';
+    }
+    echo '</select>';
+    echo '<button type="submit" name="action" value="add_link">Add Link</button>';
+    echo '</form>';
 } else {
     echo '<p>No links found.</p>';
+
+    // Add new link form
+    echo '<h3>Add New Link</h3>';
+    echo '<form method="post">';
+    echo '<label for="new_url">URL:</label>';
+    echo '<input type="text" id="new_url" name="new_url">';
+    echo '<label for="new_name">Name:</label>';
+    echo '<input type="text" id="new_name" name="new_name">';
+    echo '<label for="new_ordering">Ordering:</label>';
+    echo '<select id="new_ordering" name="new_ordering">';
+    echo '<option value="1">1</option>';
+    echo '</select>';
+    echo '<button type="submit" name="action" value="add_link">Add Link</button>';
+    echo '</form>';
 }
 
 // style
@@ -229,8 +270,6 @@ if (file_exists($current_css_file)) {
     // Fallback in case the current file does not exist
     $default_style = 'minimal.css';
 }
-
-
 
 // Sticky Elements Section
 // Fetch all sticky elements
@@ -313,10 +352,9 @@ if ($sticky_elements_result->num_rows > 0) {
     echo '</form>';
 }
 
-
 // style section
 echo '<h2>Style</h2>';
-echo "<p>Choose a style below and apply to change the site's look and feel. Changes will be visible after you refresh. All styles are classless and will work with markdown or basic HTML. Thanks to <a href="https://github.com/dohliam/dropin-minimal-css">drop-in-minimal-css</a></p>";
+echo "<p>Choose a style below and apply to change the site's look and feel. Changes will be visible after you refresh. All styles are classless and will work with markdown or basic HTML. Thanks to <a href='https://github.com/dohliam/dropin-minimal-css'>dropin-minimal-css</a></p>";
 echo '<form method="post">';
 echo '<label for="style_file">Stylesheet</label><select id="style_file" name="style_file">';
 $style_files = glob('styles/*.css');

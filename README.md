@@ -87,5 +87,5 @@ This repo exists to serve others who may have similar needs, either to use as a 
 
 ## Credits
 
-Thanks to [drop-in-minimal-css](https://github.com/dohliam/dropin-minimal-css) for an amazing collection of classless CSS files.
+Thanks to [dropin-minimal-css](https://github.com/dohliam/dropin-minimal-css) for an amazing collection of classless CSS files.
 
