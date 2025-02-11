@@ -151,4 +151,54 @@ function display_posts($conn, $verbosity = 10)
     echo '<br>';
 }
 
+
+function update_globals_file($new_values)
+{
+    $file_path = 'globals.php';
+    $content = file_get_contents($file_path);
+
+    // Find the general settings section
+    $start_marker = '/* General Settings */';
+    $end_marker = '/* End of General Settings */';
+
+    $start_pos = strpos($content, $start_marker);
+    $end_pos = strpos($content, $end_marker);
+
+    if ($start_pos === false || $end_pos === false) {
+        return false; // Markers not found
+    }
+
+    $general_settings_block = substr($content, $start_pos + strlen($start_marker), $end_pos - $start_pos - strlen($start_marker));
+
+    // Parse the existing constants
+    $lines = explode("\n", $general_settings_block);
+    $new_lines = [];
+
+    foreach ($lines as $line) {
+        if (preg_match('/define\(\'([^\']+)\',\s*(.*?)\s*\)/', $line, $matches)) {
+            $constant_name = $matches[1];
+            $constant_value = isset($new_values[$constant_name]) ? $new_values[$constant_name] : $matches[2];
+
+            if (is_numeric($constant_value) || in_array(strtolower($constant_value), ['true', 'false'])) {
+                $new_lines[] = "define('{$constant_name}', {$constant_value});";
+            } else {
+                $new_lines[] = "define('{$constant_name}', '{$constant_value}');";
+            }
+        } elseif (preg_match('/define\(\'([^\']+)\',\s*(true|false)\s*\)/', $line, $matches)) {
+            $constant_name = $matches[1];
+            $constant_value = isset($new_values[$constant_name]) ? ($new_values[$constant_name] == 'on' ? 'true' : 'false') : $matches[2];
+
+            $new_lines[] = "define('{$constant_name}', {$constant_value});";
+        } else {
+            $new_lines[] = $line;
+        }
+    }
+
+    // Replace the general settings block with the new values
+    $new_content = substr_replace($content, implode("\n", $new_lines), $start_pos + strlen($start_marker), $end_pos - $start_pos - strlen($start_marker));
+
+    // Write the updated content back to globals.php
+    file_put_contents($file_path, $new_content);
+}
+
 ?>
