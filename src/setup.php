@@ -72,11 +72,12 @@ if ($conn->multi_query($sql)) {
 // prefill with example content if tables are empty
 if (SETUP_CREATE_EXAMPLES) {
     // Prefill navigation links if they don't already exist
-    $sql = "SELECT COUNT(*) FROM `" . TABLE_PREFIX . "navigation_links`";
+    $sql = "SELECT COUNT(*) FROM `" . TABLE_PREFIX . "navigation_links` WHERE hidden = 0";
     $result = $conn->query($sql);
-    $row = $result->fetch_row();
+    $row = $result->fetch_row();	
     if ($row[0] == 0) {
-        $sql = "INSERT INTO `" . TABLE_PREFIX . "navigation_links` (url, name, ordering, hidden) VALUES ('/', 'Home', 0, 0), ('/t/', 'Posts', 1, 0)";
+	echo '<p>Creating example links...</p>';
+        $sql = "INSERT INTO `" . TABLE_PREFIX . "navigation_links` (url, name, ordering, hidden) VALUES ('/', 'Home', 0, 0), ('/p/', 'Posts', 1, 0), ('/t/', 'Tags', 2, 0)";
         $conn->query($sql);
     }
 
@@ -88,6 +89,7 @@ if (SETUP_CREATE_EXAMPLES) {
     $result = $conn->query($sql);
     $row = $result->fetch_row();
     if ($row[0] == 0) {
+	echo '<p>Creating example sticky elements...</p>';	
         $sql = "INSERT INTO `" . TABLE_PREFIX . "sticky_elements` (document_path, `order`, visibility, layout_position)
                 VALUES ('/qotd.php', 0, 'index_only', 'top')";
         $conn->query($sql);

@@ -29,7 +29,7 @@ foreach ($files as $file) {
         $new_ordering = $max_ordering_row['max_ordering'] + 1;
 
         // Insert new link
-        $sql = "INSERT INTO `" . TABLE_PREFIX . "navigation_links` (url, name, ordering, hidden) VALUES (?, ?, ?, 0)";
+        $sql = "INSERT INTO `" . TABLE_PREFIX . "navigation_links` (url, name, ordering, hidden) VALUES (?, ?, ?, 1)";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param('ssi', $url, $name, $new_ordering);
         $stmt->execute();
