@@ -4,6 +4,8 @@ RewriteEngine On
 #RewriteCond %{REQUEST_FILENAME} !-f
 #RewriteRule ^([^\.]+)$ $1.php [NC]
 
+# Looking at include's is a no-no. Just send people to the index.
+RewriteRule ^include/.*$ index.php [L]
 
 # Redirect to view_post.php /p/
 RewriteCond %{REQUEST_FILENAME} !-f

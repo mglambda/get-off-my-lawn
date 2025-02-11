@@ -19,9 +19,6 @@ if (isset($_GET['commit'])) {
 $sql = "SELECT * FROM `" . TABLE_PREFIX . "posts` ORDER BY created_at DESC";
 $result = $conn->query($sql);
 
-// Fetch all links
-$links_sql = "SELECT * FROM `" . TABLE_PREFIX . "navigation_links` ORDER BY ordering";
-$links_result = $conn->query($links_sql);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // some delete actions are handled without 'action' being set, due to the way HTML forms work
@@ -141,6 +138,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 header("Location: admin.php");
                 exit();
+            case 'apply_general_settings':
+                update_globals_file($_POST['general_settings']);
+                header("Location: admin.php");
+                exit();
         }
 
         if (isset($action_sql)) {
@@ -164,8 +165,8 @@ if (isset($_GET['preview'])) {
 }
 
 include 'header.php';
-?>
 
+?>
 <main>
     <h1>Admin Panel</h1>
 
@@ -200,60 +201,7 @@ echo '<form method="get"><button type="submit" name="commit" value="true">Commit
 // Links Section
 echo '<h2>Navigation Links</h2>';
 echo '<p>Links appear in the navigation bar in the header at the top of the page, provided they are unhidden. Pages found in the static/ folder are automatically added as links when you visit this page.</p>';
-if ($links_result->num_rows > 0) {
-    echo '<form method="post">';
-    while ($link = $links_result->fetch_assoc()) {
-        echo '<article>';
-        echo '<input type="hidden" name="links[' . $link['id'] . '][id]" value="' . $link['id'] . '">';
-        echo '<label><input type="checkbox" name="links[' . $link['id'] . '][hidden]"' . ($link['hidden'] ? ' checked' : '') . '> Hidden</label>';
-        echo '<label for="url_' . $link['id'] . '">URL:</label>';
-        echo '<input type="text" id="url_' . $link['id'] . '" name="links[' . $link['id'] . '][url]" value="' . htmlspecialchars($link['url']) . '">';
-        echo '<label for="name_' . $link['id'] . '">Name:</label>';
-        echo '<input type="text" id="name_' . $link['id'] . '" name="links[' . $link['id'] . '][name]" value="' . htmlspecialchars($link['name']) . '">';
-        echo '<label for="ordering_' . $link['id'] . '">Ordering:</label>';
-        echo '<select id="ordering_' . $link['id'] . '" name="links[' . $link['id'] . '][ordering]">';
-        for ($i = 1; $i <= $links_result->num_rows; $i++) {
-            echo '<option value="' . $i . '"' . ($link['ordering'] == $i ? ' selected' : '') . '>' . $i . '</option>';
-        }
-        echo '</select>';
-        echo '<button type="submit" name="delete_link" value="' . $link['id'] . '">Delete</button>';
-        echo '</article>';
-    }
-    echo '<button type="submit" name="action" value="apply_links">Apply</button>';
-    echo '</form>';
-
-    // Add new link form
-    echo '<h3>Add New Link</h3>';
-    echo '<form method="post">';
-    echo '<label for="new_url">URL:</label>';
-    echo '<input type="text" id="new_url" name="new_url">';
-    echo '<label for="new_name">Name:</label>';
-    echo '<input type="text" id="new_name" name="new_name">';
-    echo '<label for="new_ordering">Ordering:</label>';
-    echo '<select id="new_ordering" name="new_ordering">';
-    for ($i = 1; $i <= $links_result->num_rows + 1; $i++) {
-        echo '<option value="' . $i . '">' . $i . '</option>';
-    }
-    echo '</select>';
-    echo '<button type="submit" name="action" value="add_link">Add Link</button>';
-    echo '</form>';
-} else {
-    echo '<p>No links found.</p>';
-
-    // Add new link form
-    echo '<h3>Add New Link</h3>';
-    echo '<form method="post">';
-    echo '<label for="new_url">URL:</label>';
-    echo '<input type="text" id="new_url" name="new_url">';
-    echo '<label for="new_name">Name:</label>';
-    echo '<input type="text" id="new_name" name="new_name">';
-    echo '<label for="new_ordering">Ordering:</label>';
-    echo '<select id="new_ordering" name="new_ordering">';
-    echo '<option value="1">1</option>';
-    echo '</select>';
-    echo '<button type="submit" name="action" value="add_link">Add Link</button>';
-    echo '</form>';
-}
+include 'include/admin_links_settings.php';
 
 // style
 // Read the current CSS file name from styles/current
@@ -272,85 +220,9 @@ if (file_exists($current_css_file)) {
 }
 
 // Sticky Elements Section
-// Fetch all sticky elements
-$sticky_elements_sql = "SELECT * FROM `" . TABLE_PREFIX . "sticky_elements`";
-$sticky_elements_result = $conn->query($sticky_elements_sql);
-
 echo '<h2>Sticky Elements</h2>';
 echo '<p>Use sticky elements to add permanent features to your site, like a message of the day, or a custom navigation bar. These will be displayed on all pages, or just the index.</p>';
-if ($sticky_elements_result->num_rows > 0) {
-    echo '<form method="post">';
-    while ($sticky_element = $sticky_elements_result->fetch_assoc()) {
-        echo '<article>';
-        echo '<input type="hidden" name="sticky_elements[' . $sticky_element['id'] . '][id]" value="' . $sticky_element['id'] . '">';
-        echo '<label for="document_path_' . $sticky_element['id'] . '">Document Path:</label>';
-        echo '<input type="text" id="document_path_' . $sticky_element['id'] . '" name="sticky_elements[' . $sticky_element['id'] . '][document_path]" value="' . htmlspecialchars($sticky_element['document_path']) . '">';
-        echo '<label for="order_' . $sticky_element['id'] . '">Order:</label>';
-        echo '<input type="number" id="order_' . $sticky_element['id'] . '" name="sticky_elements[' . $sticky_element['id'] . '][order]" value="' . htmlspecialchars($sticky_element['order']) . '">';
-        echo '<label for="visibility_' . $sticky_element['id'] . '">Visibility:</label>';
-        echo '<select id="visibility_' . $sticky_element['id'] . '" name="sticky_elements[' . $sticky_element['id'] . '][visibility]">';
-        echo '<option value="all_pages"' . ($sticky_element['visibility'] == 'all_pages' ? ' selected' : '') . '>All Pages</option>';
-        echo '<option value="index_only"' . ($sticky_element['visibility'] == 'index_only' ? ' selected' : '') . '>Index Only</option>';
-        echo '</select>';
-        echo '<label for="layout_position_' . $sticky_element['id'] . '">Layout Position:</label>';
-        echo '<select id="layout_position_' . $sticky_element['id'] . '" name="sticky_elements[' . $sticky_element['id'] . '][layout_position]">';
-        echo '<option value="top"' . ($sticky_element['layout_position'] == 'top' ? ' selected' : '') . '>Top</option>';
-        echo '<option value="bottom"' . ($sticky_element['layout_position'] == 'bottom' ? ' selected' : '') . '>Bottom</option>';
-        echo '<option value="float_left"' . ($sticky_element['layout_position'] == 'float_left' ? ' selected' : '') . '>Float Left</option>';
-        echo '<option value="float_right"' . ($sticky_element['layout_position'] == 'float_right' ? ' selected' : '') . '>Float Right</option>';
-        echo '</select>';
-        echo '<button type="submit" name="delete_sticky" value="' . $sticky_element['id'] . '">Delete</button>';
-        echo '</article>';
-    }
-    echo '<button type="submit" name="action" value="update_sticky">Update Sticky Elements</button>';
-    echo '</form>';
-
-    // Add new sticky element form
-    echo '<h3>Add New Sticky Element</h3>';
-    echo '<form method="post">';
-    echo '<label for="new_document_path">Document Path:</label>';
-    echo '<input type="text" id="new_document_path" name="new_document_path">';
-    echo '<label for="new_order">Order:</label>';
-    echo '<input type="number" id="new_order" name="new_order">';
-    echo '<label for="new_visibility">Visibility:</label>';
-    echo '<select id="new_visibility" name="new_visibility">';
-    echo '<option value="all_pages">All Pages</option>';
-    echo '<option value="index_only">Index Only</option>';
-    echo '</select>';
-    echo '<label for="new_layout_position">Layout Position:</label>';
-    echo '<select id="new_layout_position" name="new_layout_position">';
-    echo '<option value="top">Top</option>';
-    echo '<option value="bottom">Bottom</option>';
-    echo '<option value="float_left">Float Left</option>';
-    echo '<option value="float_right">Float Right</option>';
-    echo '</select>';
-    echo '<button type="submit" name="action" value="add_sticky_element">Add Sticky Element</button>';
-    echo '</form>';
-} else {
-    echo '<p>No sticky elements found.</p>';
-
-    // Add new sticky element form
-    echo '<h3>Add New Sticky Element</h3>';
-    echo '<form method="post">';
-    echo '<label for="new_document_path">Document Path:</label>';
-    echo '<input type="text" id="new_document_path" name="new_document_path">';
-    echo '<label for="new_order">Order:</label>';
-    echo '<input type="number" id="new_order" name="new_order">';
-    echo '<label for="new_visibility">Visibility:</label>';
-    echo '<select id="new_visibility" name="new_visibility">';
-    echo '<option value="all_pages">All Pages</option>';
-    echo '<option value="index_only">Index Only</option>';
-    echo '</select>';
-    echo '<label for="new_layout_position">Layout Position:</label>';
-    echo '<select id="new_layout_position" name="new_layout_position">';
-    echo '<option value="top">Top</option>';
-    echo '<option value="bottom">Bottom</option>';
-    echo '<option value="float_left">Float Left</option>';
-    echo '<option value="float_right">Float Right</option>';
-    echo '</select>';
-    echo '<button type="submit" name="action" value="add_sticky_element">Add Sticky Element</button>';
-    echo '</form>';
-}
+include 'include/admin_sticky_elements_settings.php';
 
 // style section
 echo '<h2>Style</h2>';
@@ -368,6 +240,10 @@ foreach ($style_files as $file) {
 }
 echo '</select><br><button type="submit" name="action" value="restyle">Apply</button></form>';
 
+// General Settings Section
+echo '<h2>General Settings</h2>';
+echo '<p>Changing these will write to globals.php, which you can also edit by hand.</p>';
+include 'include/admin_general_settings.php';
 ?>
 </main>
 
@@ -375,3 +251,5 @@ echo '</select><br><button type="submit" name="action" value="restyle">Apply</bu
 include 'footer.php';
 $conn->close();
 ?>
+
+
