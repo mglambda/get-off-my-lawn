@@ -129,6 +129,11 @@ break;
 		case 10:
             display_post_row_short($conn, $row);
 			break;
+			case 100:
+			// this is a full view
+display_post_by_title($conn, $row['title']);
+echo '<br>';
+break;
 			} // end switch
 			if($verbosity == 0) {
 			echo '</ul>';
