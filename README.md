@@ -83,3 +83,9 @@ And with that. I was free.
 > — <cite>Tillopa at the bank of the Ganges, teaching his student Naropa about front-end development</cite>
 
 This repo exists to serve others who may have similar needs, either to use as a framework, or merely as inspiration to do what I did and taylor something yourself that is specific to your needs. All others - can get off my lawn :)
+
+
+## Credits
+
+Thanks to [drop-in-minimal-css](https://github.com/dohliam/dropin-minimal-css) for an amazing collection of classless CSS files.
+

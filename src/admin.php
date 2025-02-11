@@ -316,7 +316,7 @@ if ($sticky_elements_result->num_rows > 0) {
 
 // style section
 echo '<h2>Style</h2>';
-echo "<p>Choose a style below and apply to change the site's style. Changes will be visible after you refresh.</p>";
+echo "<p>Choose a style below and apply to change the site's look and feel. Changes will be visible after you refresh. All styles are classless and will work with markdown or basic HTML. Thanks to <a href="https://github.com/dohliam/dropin-minimal-css">drop-in-minimal-css</a></p>";
 echo '<form method="post">';
 echo '<label for="style_file">Stylesheet</label><select id="style_file" name="style_file">';
 $style_files = glob('styles/*.css');
