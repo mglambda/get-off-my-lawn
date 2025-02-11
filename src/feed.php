@@ -1,5 +1,11 @@
 <?php
 include 'globals.php';
+
+if (!RSS_PUBLISH_ENABLED) {
+    echo '<p>RSS feed disabled.</p>';
+    exit();
+}
+
 include_once 'db.php';
 
 // Set the content type to XML
