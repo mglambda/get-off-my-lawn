@@ -182,7 +182,7 @@ function update_globals_file($new_values)
             if (is_numeric($constant_value) || in_array(strtolower($constant_value), ['true', 'false'])) {
                 $new_lines[] = "define('{$constant_name}', {$constant_value});";
             } else {
-                $new_lines[] = "define('{$constant_name}', '{$constant_value}');";
+                $new_lines[] = "define('{$constant_name}', {$constant_value});";
             }
         } elseif (preg_match('/define\(\'([^\']+)\',\s*(true|false)\s*\)/', $line, $matches)) {
             $constant_name = $matches[1];

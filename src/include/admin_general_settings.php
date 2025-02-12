@@ -17,18 +17,26 @@ if ($start_matches && $end_matches) {
         if (preg_match('/define\(\'([^\']+)\',\s*\'(.*?)\'\s*\)/', $line, $matches)) {
             $constant_name = $matches[1];
             $constant_value = htmlspecialchars($matches[2], ENT_QUOTES);
+
+            // Add documentation comment
+            echo '<p>' . trim(str_replace('//', '', $lines[array_search($line, $lines) - 1]) . '</p>');
             echo '<label for="' . $constant_name . '">' . $constant_name . '</label>';
             echo '<input type="text" id="' . $constant_name . '" name="general_settings[' . $constant_name . ']" value="' . $constant_value . '"><br>';
 
         } elseif (preg_match('/define\(\'([^\']+)\',\s*(true|false)\s*\)/', $line, $matches)) {
             $constant_name = $matches[1];
             $constant_value = $matches[2];
+
+            // Add documentation comment
+            echo '<p>' . trim(str_replace('//', '', $lines[array_search($line, $lines) - 1]) . '</p>');
             echo '<label for="' . $constant_name . '">' . $constant_name . '</label>';
             echo '<input type="checkbox" id="' . $constant_name . '" name="general_settings[' . $constant_name . ']"' . ($constant_value == 'true' ? ' checked' : '') . '><br>';
 
         } elseif (preg_match('/define\(\'([^\']+)\',\s*(\d+)\s*\)/', $line, $matches)) {
             $constant_name = $matches[1];
             $constant_value = $matches[2];
+            // Add documentation comment
+            echo '<p>' . trim(str_replace('//', '', $lines[array_search($line, $lines) - 1]) . '</p>');
             echo '<label for="' . $constant_name . '">' . $constant_name . '</label>';
             echo '<input type="number" id="' . $constant_name . '" name="general_settings[' . $constant_name . ']" value="' . $constant_value . '"><br>';
         }

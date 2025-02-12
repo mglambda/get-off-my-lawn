@@ -243,6 +243,7 @@ echo '</select><br><button type="submit" name="action" value="restyle">Apply</bu
 // General Settings Section
 echo '<h2>General Settings</h2>';
 echo '<p>Changing these will write to globals.php, which you can also edit by hand.</p>';
+echo '<br>';
 include 'include/admin_general_settings.php';
 ?>
 </main>
