@@ -29,3 +29,19 @@ foreach ($style_files as $file) {
     }
 }
 echo '</select><br><button type="submit" name="action" value="restyle">Apply</button></form>';
+echo '<br>';
+
+// User-defined CSS form
+$user_style_file = 'user_style.css';
+if (file_exists($user_style_file)) {
+    $user_css_content = file_get_contents($user_style_file);
+} else {
+    $user_css_content = '';
+}
+
+echo '<h3>Custom CSS</h3>';
+echo '<p>For small changes and touch-ups, you can add custom CSS below. This will be included on all pages in addition to the theme above.</p>';
+echo '<form method="post">';
+echo '<textarea name="custom_css" rows="10" cols="50">' . htmlspecialchars($user_css_content) . '</textarea><br>';
+echo '<button type="submit" name="action" value="save_custom_css">Save Custom CSS</button>';
+echo '</form>';

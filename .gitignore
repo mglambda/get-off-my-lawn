@@ -1,5 +1,6 @@
 .htpasswd
 .htaccess
+user_style.css
 env/
 .stack-work/
 etc/

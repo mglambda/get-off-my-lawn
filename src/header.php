@@ -14,7 +14,6 @@
         $css_filename = trim(file_get_contents($current_css_file));
         if (!empty($css_filename) && file_exists('styles/' . $css_filename)) {
             echo '<link rel="stylesheet" href="styles/' . htmlspecialchars($css_filename) . '">';
-            echo '<link rel="' . WEBSITE_NAME . 'Post Feed" type=application/atom+xml href="rss/">';
         } else {
             // Fallback to minimal.css if the specified CSS file does not exist
             echo '<link rel="stylesheet" href="styles/minimal.css">';
@@ -22,6 +21,16 @@
     } else {
         // Fallback in case the current file does not exist
         echo '<link rel="stylesheet" href="styles/minimal.css">';
+    }
+
+    // user style
+    if (file_exists('user_style.css')) {
+        echo '<link rel="stylesheet" href="user_style.css">';
+    }
+
+    // rss
+    if (RSS_PUBLISH_ENABLED) {
+        echo '<link rel="' . WEBSITE_NAME . 'Post Feed" type=application/atom+xml href="rss/">';
     }
     ?>
 </head>

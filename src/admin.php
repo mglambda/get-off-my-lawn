@@ -20,6 +20,8 @@ $sql = "SELECT * FROM `" . TABLE_PREFIX . "posts` ORDER BY created_at DESC";
 $result = $conn->query($sql);
 
 
+
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // some delete actions are handled without 'action' being set, due to the way HTML forms work
     if (isset($_POST['delete_link'])) {
@@ -41,6 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         header("Location: admin.php");
         exit();
     }
+
 
     if (isset($_POST['action'])) {
         switch ($_POST['action']) {
@@ -142,6 +145,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 update_globals_file($_POST['general_settings']);
                 header("Location: admin.php");
                 exit();
+            case 'save_custom_css':
+                // Handle saving custom CSS
+                $custom_css = $_POST['custom_css'];
+                file_put_contents('user_style.css', $custom_css);
+                header("Location: admin.php");
+                exit();
         }
 
         if (isset($action_sql)) {
@@ -225,5 +234,3 @@ include 'include/admin_general_settings.php';
 include 'footer.php';
 $conn->close();
 ?>
-
-
