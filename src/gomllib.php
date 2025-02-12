@@ -118,7 +118,18 @@ function display_posts($conn, $verbosity = 10)
     // verbosity = 0 means only post titles
     // verbosity = 10 means title and abbreviated content, the default
     // verbosity >= 100 means full post
-    $sql = "SELECT * FROM `" . TABLE_PREFIX . "posts` WHERE hidden = 0 ORDER BY created_at DESC";
+
+    $posts_per_page = PAGINATION_POSTS_PER_PAGE;
+    $current_page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+
+    if ($posts_per_page <= 0) {
+        $limit_clause = '';
+    } else {
+        $offset = ($current_page - 1) * $posts_per_page;
+        $limit_clause = "LIMIT $offset, $posts_per_page";
+    }
+
+    $sql = "SELECT * FROM `" . TABLE_PREFIX . "posts` WHERE hidden = 0 ORDER BY created_at DESC $limit_clause";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
@@ -140,15 +151,45 @@ function display_posts($conn, $verbosity = 10)
                     echo '<br>';
                     break;
             } // end switch
-            if ($verbosity == 0) {
-                echo '</ul>';
-            }
-
         }
+        if ($verbosity == 0) {
+            echo '</ul>';
+        }
+
     } else {
         echo '<p>No posts found.</p>';
     }
+
     echo '<br>';
+
+    // Pagination links
+    if ($posts_per_page > 0) {
+        $total_posts_sql = "SELECT COUNT(*) as total FROM `" . TABLE_PREFIX . "posts` WHERE hidden = 0";
+        $total_result = $conn->query($total_posts_sql);
+        $total_row = $total_result->fetch_assoc();
+        $total_posts = $total_row['total'];
+        $total_pages = ceil($total_posts / $posts_per_page);
+
+        if ($total_pages > 1) {
+            echo '<div style="    margin: 20px 0; text-align: center;">';
+            if ($current_page > 1) {
+                echo '<a href="?page=' . ($current_page - 1) . '">&laquo; Previous</a>';
+            }
+
+            for ($i = 1; $i <= $total_pages; $i++) {
+                if ($i == $current_page) {
+                    echo '<b>' . $i . '</b>';
+                } else {
+                    echo '<a href="?page=' . $i . '">' . $i . '</a>';
+                }
+            }
+
+            if ($current_page < $total_pages) {
+                echo '<a href="?page=' . ($current_page + 1) . '">Next &raquo;</a>';
+            }
+            echo '</div>';
+        }
+    }
 }
 
 
