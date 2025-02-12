@@ -203,22 +203,6 @@ echo '<h2>Navigation Links</h2>';
 echo '<p>Links appear in the navigation bar in the header at the top of the page, provided they are unhidden. Pages found in the static/ folder are automatically added as links when you visit this page.</p>';
 include 'include/admin_links_settings.php';
 
-// style
-// Read the current CSS file name from styles/current
-$current_css_file = 'styles/current';
-if (file_exists($current_css_file)) {
-    $css_filename = trim(file_get_contents($current_css_file));
-    if (!empty($css_filename) && file_exists('styles/' . $css_filename)) {
-        $default_style = $css_filename;
-    } else {
-        // Fallback to minimal.css if the specified CSS file does not exist
-        $default_style = 'minimal.css';
-    }
-} else {
-    // Fallback in case the current file does not exist
-    $default_style = 'minimal.css';
-}
-
 // Sticky Elements Section
 echo '<h2>Sticky Elements</h2>';
 echo '<p>Use sticky elements to add permanent features to your site, like a message of the day, or a custom navigation bar. These will be displayed on all pages, or just the index.</p>';
@@ -227,18 +211,7 @@ include 'include/admin_sticky_elements_settings.php';
 // style section
 echo '<h2>Style</h2>';
 echo "<p>Choose a style below and apply to change the site's look and feel. Changes will be visible after you refresh. All styles are classless and will work with markdown or basic HTML. Thanks to <a href='https://github.com/dohliam/dropin-minimal-css'>dropin-minimal-css</a></p>";
-echo '<form method="post">';
-echo '<label for="style_file">Stylesheet</label><select id="style_file" name="style_file">';
-$style_files = glob('styles/*.css');
-foreach ($style_files as $file) {
-    $name = str_replace('.css', '', basename($file));
-    if (basename($file) == $default_style) {
-        echo "<option value='$file' selected>$name</option>";
-    } else {
-        echo "<option value='$file'>$name</option>";
-    }
-}
-echo '</select><br><button type="submit" name="action" value="restyle">Apply</button></form>';
+include 'include/admin_style_settings.php';
 
 // General Settings Section
 echo '<h2>General Settings</h2>';
