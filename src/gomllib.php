@@ -37,12 +37,74 @@ function display_post_row($conn, $row)
         <?php
 }
 
+function abbreviate_content($content, $max_chars)
+{
+    // Find the position to truncate the content
+    $truncate_pos = 0;
+    $current_length = 0;
+
+    // Use a stack to keep track of open tags
+    $tag_stack = [];
+
+    for ($i = 0; $i < strlen($content); $i++) {
+        if ($content[$i] == '<') {
+            // Start of an HTML tag
+            $tag_start = $i;
+            $tag_end = strpos($content, '>', $i);
+            if ($tag_end === false) {
+                break; // Malformed HTML
+            }
+            $tag = substr($content, $tag_start, $tag_end - $tag_start + 1);
+
+            if (substr($tag, 1, 1) == '/') {
+                // Closing tag
+                array_pop($tag_stack);
+            } else {
+                // Opening tag
+                $tag_name = substr($tag, 1, strpos($tag, ' ') - 1);
+                $tag_stack[] = $tag_name;
+            }
+
+            $i = $tag_end; // Move past the tag
+        } elseif ($content[$i] == ' ' && !empty($tag_stack)) {
+            // Skip spaces inside tags
+            continue;
+        } else {
+            // Regular character
+            if (++$current_length > $max_chars) {
+                $truncate_pos = $i;
+                break;
+            }
+        }
+    }
+
+    // If we didn't find a truncation point, return the original content
+    if ($truncate_pos == 0) {
+        return $content;
+    }
+
+    // Find the last space before the truncation point to respect word boundaries
+    $last_space = strrpos(substr($content, 0, $truncate_pos), ' ');
+    if ($last_space === false) {
+        $last_space = 0; // No spaces found, truncate at the beginning
+    } else {
+        $last_space += 1; // Include the space in the truncated content
+    }
+
+    // Close any open tags
+    while (!empty($tag_stack)) {
+        $content .= '</' . array_pop($tag_stack) . '>';
+    }
+
+    return substr($content, 0, $last_space) . '...';
+}
+
 function display_post_row_short($conn, $row)
 {
     echo '<article>';
     echo '<h2><a href="/p/' . str_replace(' ', '-', $row['title']) . '">' . $row['title'] . '</a></h2>';
     if (strlen($row['content']) > 300) {
-        echo '<p>' . substr($row['content'], 0, 300) . '...</p>';
+        echo '<p>' . abbreviate_content($row['content'], 300) . '</p>';
         echo '<p><a href="/' . str_replace(' ', '-', $row['title']) . '">Read more</a></p>';
     } else {
         echo '<p>' . $row['content'] . '</p>';
