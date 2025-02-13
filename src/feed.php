@@ -27,8 +27,8 @@ function display_post_as_rss_item($row)
     ?>
         <entry>
             <title><?php echo htmlspecialchars($row['title']); ?></title>
-            <link href="<?php echo $server_url . '/p/' . urlencode(str_replace(' ', '-', $row['title'])); ?>"/>
-            <id><?php echo $server_url . '/p/' . urlencode(str_replace(' ', '-', $row['title'])); ?></id>
+<link href="<?php echo $server_url . get_post_url_relative($row['title']); ?>"/>			
+<id><?php echo $server_url . get_post_url_relative($row['title']); ?></id>			
             <updated><?php echo date(DATE_ATOM, strtotime($row['created_at'])); ?></updated>
             <published><?php echo date(DATE_ATOM, strtotime($row['created_at'])); ?></published>
             <content type="html"><?php echo $row['content']; ?></content>
