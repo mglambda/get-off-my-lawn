@@ -80,7 +80,7 @@ if (isset($_GET['tags'])) {
             // collapse == true
             echo '<ul>';
             while ($row = $result->fetch_assoc()) {
-echo '<li><a href="' . get_post_url_relative($row['title']) . '">' . $row['title'] . '</a></li>';								
+                echo '<li><a href="' . get_post_url_relative($row) . '">' . $row['title'] . '</a></li>';
             } // while
             echo '</ul>';
         }
@@ -118,7 +118,7 @@ echo '<li><a href="' . get_post_url_relative($row['title']) . '">' . $row['title
             if ($post_result->num_rows > 0) {
                 echo '<ul>';
                 while ($post_row = $post_result->fetch_assoc()) {
-echo '<li><a href="' . get_post_url_relative($post_row['title']) . '">' . $post_row['title'] . '</a></li>';					
+                    echo '<li><a href="' . get_post_url_relative($post_row) . '">' . $post_row['title'] . '</a></li>';
                 }
                 echo '</ul>';
             }

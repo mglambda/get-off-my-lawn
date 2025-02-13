@@ -185,7 +185,7 @@ include 'header.php';
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
         echo '<article>';
-echo '<h3><a href="' . get_post_url_relative($row['title']) . '">' . htmlspecialchars($row['title']) . '</a></h3>';		
+        echo '<h3><a href="' . get_post_url_relative($row) . '">' . htmlspecialchars($row['title']) . '</a></h3>';
         echo '<p><em>Created: ' . htmlspecialchars($row['created_at']) . ' | Last Modified: ' . htmlspecialchars($row['updated_at']) . '</em></p>';
         echo '<form id="preview_form" method="get"></form>';
         echo '<form method="post">';

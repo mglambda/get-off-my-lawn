@@ -29,6 +29,7 @@ $conn->select_db($db_name);
 $sql = "
 CREATE TABLE IF NOT EXISTS `" . TABLE_PREFIX . "posts` (
     `id` INT(11) AUTO_INCREMENT PRIMARY KEY,
+    `uname` VARCHAR(255) NOT NULL UNIQUE,	
     `title` VARCHAR(255) NOT NULL,
     `content` TEXT NOT NULL,
     `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,

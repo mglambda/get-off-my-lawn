@@ -5,11 +5,11 @@ include_once 'db.php';
 include_once 'gomllib.php';
 
 if (isset($_GET['post'])) {
-    $title = str_replace('-', ' ', $_GET['post']);
-    $page_title = $title;
+    $uname = $_GET['post'];
+    $page_title = $uname; // FIXME: probably want the pretty title here
     include 'header.php';
     echo '<main>';
-    display_post_by_title($conn, $title);
+    display_post_by_uname($conn, $uname);
     echo '</main>';
 } else {
     $page_title = 'Posts';

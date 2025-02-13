@@ -1,9 +1,18 @@
 <?php
 
 
-function get_post_url_relative($post_title)
+function post_uname_from_title($post_title)
 {
-    return '/p/' . str_replace(' ', '-', $post_title);
+    // replace special chars wit hhyphens
+    $hyphen_uname = preg_replace("![^a-z0-9]+!i", "-", $post_title);
+    // collapse hyphens
+    $upper_uname = str_replace('--', '-', str_replace('---', '-', $hyphen_uname));
+    return strtolower($upper_uname);
+}
+
+function get_post_url_relative($post_row)
+{
+    return "/p/" . $post_row['uname'];
 }
 
 function display_post_row($conn, $row)
@@ -102,10 +111,10 @@ function abbreviate_content($content, $max_chars)
 function display_post_row_short($conn, $row)
 {
     echo '<article>';
-    echo '<h2><a href="/p/' . get_post_url_relative($row['title']) . '">' . $row['title'] . '</a></h2>';
+    echo '<h2><a href="/p/' . get_post_url_relative($row) . '">' . $row['title'] . '</a></h2>';
     if (strlen($row['content']) > 300) {
         echo '<p>' . abbreviate_content($row['content'], 300) . '</p>';
-        echo '<p><a href="/' . get_post_url_relative($row['title']) . '">Read more</a></p>';
+        echo '<p><a href="/' . get_post_url_relative($row) . '">Read more</a></p>';
     } else {
         echo '<p>' . $row['content'] . '</p>';
     }
@@ -130,11 +139,11 @@ function display_post($conn, $post_id)
     $stmt->close();
 }
 
-function display_post_by_title($conn, $title)
+function display_post_by_uname($conn, $uname)
 {
-    $sql = "SELECT * FROM `" . TABLE_PREFIX . "posts` WHERE title = ?";
+    $sql = "SELECT * FROM `" . TABLE_PREFIX . "posts` WHERE uname = ?";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param('s', $title);
+    $stmt->bind_param('s', $uname);
     $stmt->execute();
     $result = $stmt->get_result();
 
@@ -202,14 +211,14 @@ function display_posts($conn, $verbosity = 10)
         while ($row = $result->fetch_assoc()) {
             switch ($verbosity) {
                 case 0:
-                    echo '<li><a href="' . get_post_url_relative($row['title']) . '">' . $row['title'] . '</a></li>';
+                    echo '<li><a href="' . get_post_url_relative($row) . '">' . $row['title'] . '</a></li>';
                     break;
                 case 10:
                     display_post_row_short($conn, $row);
                     break;
                 case 100:
                     // this is a full view
-                    display_post_by_title($conn, $row['title']);
+                    display_post_by_uname($conn, $row['uname']);
                     echo '<br>';
                     break;
             } // end switch

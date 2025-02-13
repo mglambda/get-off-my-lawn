@@ -15,7 +15,9 @@ $files = glob($staging_dir . '*.{txt,md}', GLOB_BRACE);
 foreach ($files as $file) {
     $filename = basename($file);
     // Remove the extension to get the title
-    $title = str_replace(['-', '_'], ' ', pathinfo($filename, PATHINFO_FILENAME));
+    $title = pathinfo($filename, PATHINFO_FILENAME);
+    // uname has just lowercase alphanumerics and hyphens
+    $uname = post_uname_from_title($title);
 
     // Read file content
     $content = file_get_contents($file);
@@ -33,9 +35,9 @@ foreach ($files as $file) {
     }
 
     // Check if post exists
-    $sql = "SELECT * FROM `" . TABLE_PREFIX . "posts` WHERE title = ?";
+    $sql = "SELECT * FROM `" . TABLE_PREFIX . "posts` WHERE uname = ?";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param('s', $title);
+    $stmt->bind_param('s', $uname);
     $stmt->execute();
     $result = $stmt->get_result();
 
@@ -50,9 +52,9 @@ foreach ($files as $file) {
     } else {
         // Insert new post
 
-        $sql = "INSERT INTO `" . TABLE_PREFIX . "posts` (title, content) VALUES (?, ?)";
+        $sql = "INSERT INTO `" . TABLE_PREFIX . "posts` (uname, title, content) VALUES (?, ?, ?)";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param('ss', $title, $content);
+        $stmt->bind_param('sss', $uname, $title, $content);
     }
 
     if ($stmt->execute()) {
