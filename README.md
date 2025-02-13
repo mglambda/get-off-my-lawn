@@ -24,11 +24,11 @@ Have you ever been in hand-to-hand combat with a webpage? Does javascript scare 
 
  - Blog posting and editing by saving text files
   - Add new static pages easily (also as files)
- - Admin panel (htaccess based) to hide/unhide or delete posts
-  - Tags for posts
+ - Admin panel (htaccess based) to do stuff that's annoying to do by file
+  - Tags, RSS, Hero banner, nav links, widgets - all the basic stuff that makes sense
  - mySQL database because, yes, data integrity is important I guess
- - Simple, clean and truly minimal design that is easy to style using CSS
- - High Accessibility
+ - Simple, clean and truly minimal design that is easy to style using CSS with 100+ classless CSS files included
+ - High Accessibility: Made by a blind developer. *Screen readers hate this one trick!*
    - Optimized for mobile and desktop use
  - Designed to be easily extensible
  - Now stop asking you don't actually need more
@@ -49,9 +49,9 @@ If you have a user with mySQL root privileges step 4 will create a database for 
 
 ```
  $ sudo mysql
-  > create database goml;
+  > create database goml_db;
  > CREATE USER 'new_user'@'localhost' IDENTIFIED BY 'password';
- > GRANT ALL PRIVILEGES ON goml.* TO 'new_user'@'localhost';
+ > GRANT ALL PRIVILEGES ON goml_db.* TO 'new_user'@'localhost';
  > FLUSH PRIVILEGES;
 ```
 
@@ -61,10 +61,10 @@ After this, you would edit globals.php to contain the following
 define('DB_HOST', 'localhost');
 define('DB_USER', 'new_user');
 define('DB_PASS', 'password');
-define('DB_NAME', 'goml');
+define('DB_NAME', 'goml_db');
 ```
 
-4. Visit `https:://yourdomain.com/setup.php`. This will create a database if you didn't create one in step 3, provided the user has the necessary privileges, It also creates all the required tables in the database, along with some other stuff.
+4. Visit `https:://yourdomain.com/setup.php`. This will create a database if you didn't create one in step 3, provided the user has the necessary privileges, It also creates all the required tables in the database, along with some other stuff and example content.
 
 5. Done. You can now visit `https://yourdomain.com/admin.php` to commit posts or to change the stylesheet of the website. You can add static pages by creating them as php files to the static/ folder. They will be linked in the navigation header automatically. Add posts by putting text files in the staging/ folder and commiting them in the admin panel.
 
