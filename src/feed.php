@@ -1,5 +1,6 @@
 <?php
 include 'globals.php';
+include_once 'gomllib.php';
 
 if (!RSS_PUBLISH_ENABLED) {
     echo '<p>RSS feed disabled.</p>';
@@ -14,13 +15,20 @@ header('Content-Type: application/atom+xml; charset=UTF-8');
 // Get the current server URL
 $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
 $server_url = $protocol . $_SERVER['HTTP_HOST'];
-
-$sql = "SELECT p.* FROM `" . TABLE_PREFIX . "posts` p
+if (!RSS_PUBLISH_ALL) {
+    // only publish posts with rss tag
+    $sql = "SELECT p.* FROM `" . TABLE_PREFIX . "posts` p
         JOIN `" . TABLE_PREFIX . "tags` t ON p.id = t.post_id
         WHERE t.tag = 'rss' AND p.hidden = 0
         ORDER BY p.created_at DESC";
-$result = $conn->query($sql);
-
+    $result = $conn->query($sql);
+} else {
+    // publish all posts
+    $sql = "SELECT * FROM `" . TABLE_PREFIX . "posts`
+        WHERE hidden = 0
+        ORDER BY created_at DESC";
+    $result = $conn->query($sql);
+}
 
 function display_post_as_rss_item($row)
 {

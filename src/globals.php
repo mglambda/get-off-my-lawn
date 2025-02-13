@@ -24,6 +24,9 @@ if (!defined('WEBSITE_NAME')) {
     // If true, yourdomain.com/rss/ generates an RSS feed (atom format), which is advertised in the website header.
     define('RSS_PUBLISH_ENABLED', true);
 
+    // If true, all posts will be published to the RSS feed. Otherwise, you have to tag a post with 'RSS' to be on the feed.
+    define('RSS_PUBLISH_ALL', true);
+
     // How many posts should be displayed per page before starting to paginate. Set to 0 or lower to disable pagination entirely.
     define('PAGINATION_POSTS_PER_PAGE', 20);
 
