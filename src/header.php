@@ -56,7 +56,13 @@ $banner_images = glob('banner_images/*.{jpg,jpeg,png,gif}', GLOB_BRACE);
             $alt_text = trim(file_get_contents($txt_file));
         }
 
-        echo '<img src="' . htmlspecialchars($random_banner) . '" alt="' . htmlspecialchars($alt_text) . '" style="width: 100%; height: auto;">';
+
+
+        // so the header works on any page we want absolute url        
+        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+        $server_url = $protocol . $_SERVER['HTTP_HOST'];        
+        
+        echo '<img src="' . $server_url . '/' . htmlspecialchars($random_banner) . '" alt="' . htmlspecialchars($alt_text) . '" style="width: 100%; height: auto;">';
 
         if (WEBSITE_NAME_OVERLAY_BANNER) {
             // Display the website name over the banner image
