@@ -114,7 +114,7 @@ function display_post_row_short($conn, $row)
     echo '<h2><a href="/p/' . get_post_url_relative($row) . '">' . $row['title'] . '</a></h2>';
     if (strlen($row['content']) > 300) {
         echo '<p>' . abbreviate_content($row['content'], 300) . '</p>';
-        echo '<p><a href="/' . get_post_url_relative($row) . '">Read more</a></p>';
+        echo '<p><a href="' . get_post_url_relative($row) . '">Read more</a></p>';
     } else {
         echo '<p>' . $row['content'] . '</p>';
     }
