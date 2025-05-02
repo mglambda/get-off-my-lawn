@@ -4,7 +4,6 @@ include 'globals.php';
 
 if (isset($_GET['page'])) {
     $filename = $_GET['page'] . '.php';
-    var_dump($filename);
     if (file_exists('static/' . $filename)) {
         $page_title = str_replace('-', ' ', basename($filename, '.html'));
         include 'header.php';
