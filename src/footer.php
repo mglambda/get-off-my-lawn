@@ -19,6 +19,10 @@ if ($sticky_elements_result->num_rows > 0) {
 ?>
 <footer>
 <hr>
+<?php if (isset($footer_extra)) {
+echo "<p><small>$footer_extra</small><p>";
+}
+?>
 <p><small>&copy; <?php echo date('Y') . " " . WEBSITE_NAME; ?> All rights reserved. Powered by <a href='https://github.com/mglambda/get-off-my-lawn'>get-off-my-lawn</a>.<a href="/admin.php">Admin</a>.</small><a href="rss/"><img src="img/rss.svg" style="height:1em;" alt="RSS Icon"></a></p>
 </footer>
 </body>
