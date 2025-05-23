@@ -20,7 +20,7 @@ RewriteRule ^p/(.*)$ view_post.php?post=$1 [L]
 
 # Redirect to view_static.php for static pages
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^s/(.*)$ view_static.php?page=$1 [L]
+RewriteRule ^s/(.*)$ view_static.php?page=$1 [QSA,L]
 
 # Redirect to view_tags.php for tags
 RewriteCond %{REQUEST_FILENAME} !-f
