@@ -247,6 +247,8 @@ class Parsedown
                         $Block['identified'] = true;
                     }
 
+
+
                     if ($this->isBlockContinuable($blockType)) {
                         $Block['continuable'] = true;
                     }
@@ -512,9 +514,19 @@ class Parsedown
 
         $text = trim($text, ' ');
 
+        // GHOST: Create a clean text version for the anchor ID.
+        // This strips any inline markdown formatting.
+        $cleanText = preg_replace('/\[([^\]]+)\]\([^\)]+\)/', '$1', $text); // Strip links, keeping text
+        $cleanText = preg_replace('/[\\`*_~\[\]()#+.!]/', '', $cleanText); // Strip other markdown chars
+        $id = $this->createAnchorId($cleanText);
+
         $Block = array(
             'element' => array(
                 'name' => 'h' . $level,
+                // GHOST: Add the 'id' attribute for the anchor.
+                'attributes' => array(
+                    'id' => $id,
+                ),
                 'handler' => array(
                     'function' => 'lineElements',
                     'argument' => $text,
@@ -751,7 +763,20 @@ class Parsedown
         }
 
         if ($Line['indent'] < 4 and chop(chop($Line['text'], ' '), $Line['text'][0]) === '') {
+            // GHOST: Get the text from the block that is being promoted to a header.
+            $text = $Block['element']['handler']['argument'];
+
+            // GHOST: Create a clean text version for the anchor ID.
+            $cleanText = preg_replace('/\[([^\]]+)\]\([^\)]+\)/', '$1', $text); // Strip links, keeping text
+            $cleanText = preg_replace('/[\\`*_~\[\]()#+.!]/', '', $cleanText); // Strip other markdown chars
+            $id = $this->createAnchorId($cleanText);
+
             $Block['element']['name'] = $Line['text'][0] === '=' ? 'h1' : 'h2';
+
+            // GHOST: Add the 'id' attribute for the anchor.
+            $Block['element']['attributes'] = array(
+                'id' => $id,
+            );
 
             return $Block;
         }
@@ -1789,6 +1814,23 @@ class Parsedown
 
     protected $DefinitionData;
 
+    // GHOST: Add a helper function to create doctoc-style anchor IDs.
+    protected function createAnchorId($text)
+    {
+        // 1. Lowercase the string
+        $text = strtolower($text);
+        // 2. Remove anything that is not a letter, number, or hyphen/space
+        $text = preg_replace('/[^\pL\d\s-]/u', '', $text);
+        // 3. Replace spaces with hyphens
+        $text = preg_replace('/[\s_]+/', '-', $text);
+        // 4. Collapse multiple hyphens to a single hyphen
+        $text = preg_replace('/-+/u', '-', $text);
+        // 5. Trim hyphens from the start and end
+        $text = trim($text, '-');
+
+        return $text;
+    }
+
     #
     # Read-Only
 
@@ -1824,3 +1866,4 @@ class Parsedown
                    'wbr', 'time',
     );
 }
+
